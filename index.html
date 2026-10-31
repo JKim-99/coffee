@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="커피를 커피답게. 컴포즈커피의 다양한 메뉴와 브랜드 이야기를 만나보세요.">
+  <meta name="theme-color" content="#f7c600">
+  <title>컴포즈커피 | 커피를 커피답게</title>
+  <link rel="preconnect" href="https://composecoffee.com">
+  <link rel="stylesheet" href="styles.css">
+  <script src="menu-data.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body class="home-page">
+  <a class="skip-link" href="#main">본문 바로가기</a>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="컴포즈커피 홈">
+      <span class="brand-mark" aria-hidden="true">C</span>
+      <span class="brand-word">COMPOSE<span>COFFEE</span></span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="메뉴 열기"><span></span><span></span><span></span></button>
+    <nav class="primary-nav" id="primary-nav" aria-label="주 메뉴">
+      <a class="nav-link is-current" href="index.html" aria-current="page">홈</a>
+      <a class="nav-link" href="menu.html">메뉴</a>
+      <a class="nav-link" href="https://composecoffee.com/about" target="_blank" rel="noopener">브랜드</a>
+      <a class="nav-link" href="https://composecoffee.com/findstore" target="_blank" rel="noopener">매장 찾기</a>
+      <a class="nav-cta" href="tel:18995685">창업 문의 <span>1899-5685</span></a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="eyebrow-line"></span> COMPOSE COFFEE</p>
+        <h1 id="hero-title">커피를<br><em>커피답게</em></h1>
+        <p class="hero-description">좋은 커피 한 잔이 만드는 기분 좋은 순간.<br>오늘의 취향을 컴포즈커피에서 만나보세요.</p>
+        <a class="button button-dark" href="menu.html">메뉴 둘러보기 <span aria-hidden="true">↗</span></a>
+        <span class="hero-note">YOUR DAILY MOMENT, COMPOSED.</span>
+      </div>
+      <div class="hero-art" aria-label="컴포즈커피 음료 이미지">
+        <div class="hero-sun"></div>
+        <div class="hero-stamp" aria-hidden="true">GOOD<br>COFFEE<br><span>GOOD DAY</span></div>
+        <figure class="hero-drink hero-drink-main"><img src="https://composecoffee.com/files/attach/images/272857/753/303/6a917242a4ea3de7dca9b126c8c31262.jpg" alt="컴포즈커피 아이스 아메리카노" fetchpriority="high"></figure>
+        <figure class="hero-drink hero-drink-small"><img src="https://composecoffee.com/files/attach/images/272857/760/303/6259e5462a9a15bae3a2709ffdd2b730.jpg" alt="컴포즈커피 카페라떼"></figure>
+        <span class="hero-orbit orbit-one" aria-hidden="true">FRESH · DAILY · COMPOSE</span>
+      </div>
+      <a class="scroll-cue" href="#favorites"><span></span> SCROLL TO DISCOVER</a>
+    </section>
+
+    <section class="intro-strip" aria-label="브랜드 메시지">
+      <p>고품질 커피브랜드, 컴포즈</p><span aria-hidden="true">✳</span><p>오늘의 커피를 더 즐겁게</p><span aria-hidden="true">✳</span><p>YOUR DAILY COFFEE</p>
+    </section>
+
+    <section class="favorites section-wrap" id="favorites" aria-labelledby="favorites-title">
+      <div class="section-heading reveal">
+        <div><p class="eyebrow">FIND YOUR FAVORITE</p><h2 id="favorites-title">오늘의 <em>추천 메뉴</em></h2></div>
+        <a class="text-link" href="menu.html">전체 메뉴 보기 <span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="featured-grid" id="featured-grid" aria-live="polite"></div>
+    </section>
+
+    <section class="brand-callout">
+      <div class="brand-callout-inner reveal">
+        <p class="eyebrow">MADE FOR YOUR EVERYDAY</p>
+        <h2>한 잔의 커피에<br><em>기분 좋은 여유를</em></h2>
+        <p>컴포즈커피의 브랜드 이야기와 함께<br>우리 동네 가까운 매장을 찾아보세요.</p>
+        <div class="callout-actions"><a class="button button-dark" href="https://composecoffee.com/about" target="_blank" rel="noopener">브랜드 이야기 <span aria-hidden="true">↗</span></a><a class="button button-outline" href="https://composecoffee.com/findstore" target="_blank" rel="noopener">가까운 매장 찾기</a></div>
+      </div>
+      <div class="callout-decoration" aria-hidden="true">C</div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <a class="brand brand-footer" href="index.html"><span class="brand-mark" aria-hidden="true">C</span><span class="brand-word">COMPOSE<span>COFFEE</span></span></a>
+    <div class="footer-links"><a href="https://composecoffee.com/about" target="_blank" rel="noopener">브랜드 소개</a><a href="https://composecoffee.com/findstore" target="_blank" rel="noopener">매장 찾기</a><a href="https://composecoffee.com/custumer" target="_blank" rel="noopener">고객의 소리</a></div>
+    <p>고객상담 <a href="tel:18995003">1899-5003</a> <span>·</span> 창업문의 <a href="tel:18995685">1899-5685</a></p>
+    <small>본 페이지는 컴포즈커피 브랜드와 메뉴를 소개하기 위한 제작 가이드 기반 시안입니다. 메뉴 사진과 제품 정보는 <a href="menu.md">menu.md</a> 및 공식 홈페이지 자료를 참고합니다.</small>
+  </footer>
+</body>
+</html>
