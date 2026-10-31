@@ -24,6 +24,24 @@
     }, { once: true });
   });
 
+  const heroDrinkImages = [
+    document.getElementById('hero-drink-main-image'),
+    document.getElementById('hero-drink-small-image')
+  ].filter(Boolean);
+  if (heroDrinkImages.length === 2) {
+    const uniquePhotos = [...new Map(
+      menu.filter((item) => item.image).map((item) => [item.image, item])
+    ).values()];
+    for (let index = uniquePhotos.length - 1; index > 0; index -= 1) {
+      const randomIndex = Math.floor(Math.random() * (index + 1));
+      [uniquePhotos[index], uniquePhotos[randomIndex]] = [uniquePhotos[randomIndex], uniquePhotos[index]];
+    }
+    uniquePhotos.slice(0, 2).forEach((item, index) => {
+      heroDrinkImages[index].src = item.image;
+      heroDrinkImages[index].alt = `컴포즈커피 ${item.name} 메뉴 사진`;
+    });
+  }
+
   function cardMarkup(item, index) {
     const detailUrl = `menu-detail.html?id=${encodeURIComponent(item.id)}`;
     return `<a class="menu-card" href="${detailUrl}" style="--card-index:${index};animation-delay:${index * 180}ms" aria-label="${escapeHtml(item.name)} 메뉴 상세 보기">
