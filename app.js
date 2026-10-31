@@ -57,7 +57,7 @@
       const randomIndex = Math.floor(Math.random() * (index + 1));
       [favorites[index], favorites[randomIndex]] = [favorites[randomIndex], favorites[index]];
     }
-    favorites.length = Math.min(10, favorites.length);
+    favorites.length = Math.min(12, favorites.length);
     featuredGrid.innerHTML = favorites.map(cardMarkup).join('') || '<p>메뉴 자료를 불러오지 못했습니다.</p>';
     document.querySelectorAll('.section-heading, .brand-callout-inner').forEach((element) => element.classList.add('reveal'));
     if ('IntersectionObserver' in window) {
