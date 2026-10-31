@@ -6,6 +6,14 @@
   const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
   })[char]);
+  const decodeHtmlEntities = (value) => {
+    const textarea = document.createElement('textarea');
+    textarea.innerHTML = String(value ?? '');
+    return textarea.value;
+  };
+  const displayName = (value) => decodeHtmlEntities(value)
+    .replace(/^\s*[IH]-\s*/i, '')
+    .trim();
 
   document.querySelectorAll('.nav-toggle').forEach((button) => {
     button.addEventListener('click', () => {
@@ -38,15 +46,16 @@
     }
     uniquePhotos.slice(0, 2).forEach((item, index) => {
       heroDrinkImages[index].src = item.image;
-      heroDrinkImages[index].alt = `컴포즈커피 ${item.name} 메뉴 사진`;
+      heroDrinkImages[index].alt = `컴포즈커피 ${displayName(item.name)} 메뉴 사진`;
     });
   }
 
   function cardMarkup(item, index) {
     const detailUrl = `menu-detail.html?id=${encodeURIComponent(item.id)}`;
-    return `<a class="menu-card" href="${detailUrl}" style="--card-index:${index};animation-delay:${index * 180}ms" aria-label="${escapeHtml(item.name)} 메뉴 상세 보기">
-      <div class="menu-card-image"><img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" loading="lazy"><span class="card-arrow" aria-hidden="true">↗</span></div>
-      <div class="menu-card-copy"><small>${escapeHtml(item.category)}</small><h3>${escapeHtml(item.name)}</h3></div>
+    const name = displayName(item.name);
+    return `<a class="menu-card" href="${detailUrl}" style="--card-index:${index};animation-delay:${index * 180}ms" aria-label="${escapeHtml(name)} 메뉴 상세 보기">
+      <div class="menu-card-image"><img src="${escapeHtml(item.image)}" alt="${escapeHtml(name)}" loading="lazy"><span class="card-arrow" aria-hidden="true">↗</span></div>
+      <div class="menu-card-copy"><small>${escapeHtml(item.category)}</small><h3>${escapeHtml(name)}</h3></div>
     </a>`;
   }
 
@@ -88,7 +97,7 @@
     function renderMenu() {
       const query = search.value.trim().toLocaleLowerCase('ko');
       const filtered = menu.filter((item) =>
-        (selectedCategory === '전체' || item.category === selectedCategory) && item.name.toLocaleLowerCase('ko').includes(query)
+        (selectedCategory === '전체' || item.category === selectedCategory) && displayName(item.name).toLocaleLowerCase('ko').includes(query)
       );
       menuGrid.innerHTML = filtered.map(cardMarkup).join('');
       count.textContent = `${filtered.length}개 메뉴`;
@@ -123,11 +132,12 @@
           return `<li class="nutrition-item"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></li>`;
         }).join('')
         : '<li class="nutrition-item"><span>제품 영양 정보</span><strong>정보 없음</strong></li>';
-      document.title = `${item.name} | 컴포즈커피 메뉴`;
+      const name = displayName(item.name);
+      document.title = `${name} | 컴포즈커피 메뉴`;
       detailRoot.innerHTML = `<a class="back-link" href="menu.html"><span aria-hidden="true">←</span> 전체 메뉴</a>
         <div class="detail-layout">
-          <div class="detail-image-wrap"><img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" fetchpriority="high"></div>
-          <div class="detail-copy"><p class="eyebrow">${escapeHtml(item.category)}</p><h1>${escapeHtml(item.name)}</h1>
+          <div class="detail-image-wrap"><img src="${escapeHtml(item.image)}" alt="${escapeHtml(name)}" fetchpriority="high"></div>
+          <div class="detail-copy"><p class="eyebrow">${escapeHtml(item.category)}</p><h1>${escapeHtml(name)}</h1>
             <h2 class="nutrition-title">제품 영양 정보</h2><ul class="nutrition-list">${nutritionMarkup}</ul>
             <p class="detail-note">제품 정보는 공식 공개 자료를 바탕으로 정리했으며, 제공 시점과 판매 매장에 따라 달라질 수 있습니다. 최신 정보는 공식 상세 페이지에서 확인해 주세요.</p>
             <div class="detail-actions"><a class="button button-dark" href="${escapeHtml(item.detailUrl)}" target="_blank" rel="noopener">공식 제품 정보 <span aria-hidden="true">↗</span></a><a class="button button-outline" href="menu.html">다른 메뉴 보기</a></div>
