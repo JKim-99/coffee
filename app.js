@@ -26,7 +26,7 @@
 
   function cardMarkup(item, index) {
     const detailUrl = `menu-detail.html?id=${encodeURIComponent(item.id)}`;
-    return `<a class="menu-card" href="${detailUrl}" style="animation-delay:${Math.min(index % 12, 8) * 45}ms" aria-label="${escapeHtml(item.name)} 메뉴 상세 보기">
+    return `<a class="menu-card" href="${detailUrl}" style="--card-index:${index};animation-delay:${index * 180}ms" aria-label="${escapeHtml(item.name)} 메뉴 상세 보기">
       <div class="menu-card-image"><img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" loading="lazy"><span class="card-arrow" aria-hidden="true">↗</span></div>
       <div class="menu-card-copy"><small>${escapeHtml(item.category)}</small><h3>${escapeHtml(item.name)}</h3></div>
     </a>`;
@@ -34,7 +34,12 @@
 
   const featuredGrid = document.getElementById('featured-grid');
   if (featuredGrid) {
-    const favorites = menu.filter((item) => item.category === '추천 메뉴').slice(0, 4);
+    const favorites = [...menu];
+    for (let index = favorites.length - 1; index > 0; index -= 1) {
+      const randomIndex = Math.floor(Math.random() * (index + 1));
+      [favorites[index], favorites[randomIndex]] = [favorites[randomIndex], favorites[index]];
+    }
+    favorites.length = Math.min(10, favorites.length);
     featuredGrid.innerHTML = favorites.map(cardMarkup).join('') || '<p>메뉴 자료를 불러오지 못했습니다.</p>';
     document.querySelectorAll('.section-heading, .brand-callout-inner').forEach((element) => element.classList.add('reveal'));
     if ('IntersectionObserver' in window) {
