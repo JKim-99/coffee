@@ -10,12 +10,20 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="auth.css">
   <script src="account.js" defer></script>
+  <script src="site-auth.js" defer></script>
 </head>
 <body class="auth-page">
   <a class="skip-link" href="#main">본문 바로가기</a>
   <header class="site-header">
     <a class="brand" href="index.html" aria-label="홈으로"><span class="brand-mark" aria-hidden="true">C</span><span class="brand-word">COMPOSE<span>COFFEE</span></span></a>
-    <nav class="auth-nav" aria-label="계정 메뉴"><a href="index.html">홈으로</a></nav>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="메뉴 열기"><span></span><span></span><span></span></button>
+    <nav class="primary-nav" id="primary-nav" aria-label="주 메뉴">
+      <a class="nav-link" href="index.html">홈</a>
+      <a class="nav-link" href="menu.html">메뉴</a>
+      <a class="nav-link" href="contact.html">문의하기</a>
+      <a class="nav-link is-current" href="account.html" aria-current="page">내 정보</a>
+      <a class="nav-link" id="nav-logout-link" href="#logout">로그아웃</a>
+    </nav>
   </header>
 
   <main id="main" class="auth-main account-main">
