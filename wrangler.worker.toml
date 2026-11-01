@@ -1,6 +1,7 @@
 name = "compose-coffee-api"
 main = "workers/api.js"
 compatibility_date = "2026-10-30"
+compatibility_flags = ["nodejs_compat"]
 
 [[d1_databases]]
 binding = "DB"

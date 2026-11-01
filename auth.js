@@ -36,7 +36,7 @@
         status.textContent = '회원가입이 완료되었습니다. 로그인해 주세요.';
         window.setTimeout(() => { window.location.href = 'login.html?registered=1'; }, 900);
       } catch (error) {
-        status.textContent = error.message;
+        status.textContent = error.message || '요청을 처리하지 못했습니다. 네트워크 연결을 확인하고 다시 시도해 주세요.';
       } finally {
         submit.disabled = false;
       }

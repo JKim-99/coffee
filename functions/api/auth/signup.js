@@ -1,3 +1,5 @@
+import { scrypt } from 'node:crypto';
+
 function json(data, status = 200, headers = {}) {
   return new Response(JSON.stringify(data), {
     status,
@@ -18,9 +20,9 @@ function base64Url(bytes) {
 
 async function hashPassword(password) {
   const salt = crypto.getRandomValues(new Uint8Array(16));
-  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveBits']);
-  const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', salt, iterations: 210000, hash: 'SHA-256' }, key, 256);
-  return `pbkdf2-sha256$210000$${base64Url(salt)}$${base64Url(new Uint8Array(bits))}`;
+  const saltText = base64Url(salt);
+  const key = await new Promise((resolve, reject) => scrypt(password, saltText, 64, { N: 16384, r: 8, p: 1, maxmem: 64 * 1024 * 1024 }, (error, derivedKey) => error ? reject(error) : resolve(derivedKey)));
+  return `scrypt$16384$8$1$${saltText}$${base64Url(key)}`;
 }
 
 export async function onRequestPost({ request, env }) {
@@ -37,15 +39,22 @@ export async function onRequestPost({ request, env }) {
   if (password.length < 8 || password.length > 128) return json({ error: '비밀번호는 8~128자로 입력해 주세요.' }, 400);
   if (!['female', 'male', 'undisclosed'].includes(gender)) return json({ error: '성별 항목을 선택해 주세요.' }, 400);
 
-  const existing = await env.DB.prepare('SELECT id FROM users WHERE email = ? COLLATE NOCASE AND deleted_at IS NULL').bind(email).first();
-  if (existing) return json({ error: '이미 가입된 이메일 주소입니다.' }, 409);
-
   const id = crypto.randomUUID();
   const now = new Date().toISOString();
-  const passwordHash = await hashPassword(password);
-  await env.DB.prepare(
-    'INSERT INTO users (id, nickname, email, password_hash, gender, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)'
-  ).bind(id, nickname, email, passwordHash, gender, now, now).run();
+  try {
+    const existing = await env.DB.prepare('SELECT id FROM users WHERE email = ? COLLATE NOCASE AND deleted_at IS NULL').bind(email).first();
+    if (existing) return json({ error: '이미 가입된 이메일 주소입니다.' }, 409);
 
-  return json({ user: { id, nickname, email, gender, created_at: now } }, 201);
+    const passwordHash = await hashPassword(password);
+    await env.DB.prepare(
+      'INSERT INTO users (id, nickname, email, password_hash, gender, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)'
+    ).bind(id, nickname, email, passwordHash, gender, now, now).run();
+
+    return json({ user: { id, nickname, email, gender, created_at: now } }, 201);
+  } catch (error) {
+    const isDuplicate = String(error?.message || '').includes('UNIQUE constraint failed: users.email');
+    if (isDuplicate) return json({ error: '이미 가입된 이메일 주소입니다.' }, 409);
+    console.error('Signup operation failed', { name: error?.name || 'Error', message: String(error?.message || '').slice(0, 180) });
+    return json({ error: '회원가입을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.' }, 500);
+  }
 }

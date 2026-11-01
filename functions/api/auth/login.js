@@ -1,3 +1,5 @@
+import { scrypt } from 'node:crypto';
+
 function json(data, status = 200, headers = {}) {
   return new Response(JSON.stringify(data), {
     status,
@@ -17,13 +19,11 @@ function base64Url(bytes) {
 }
 
 async function verifyPassword(password, encoded) {
-  const [algorithm, iterationsText, saltText, expected] = String(encoded).split('$');
-  const iterations = Number(iterationsText);
-  if (algorithm !== 'pbkdf2-sha256' || !Number.isInteger(iterations) || iterations < 100000 || iterations > 1000000) return false;
-  const salt = Uint8Array.from(atob(saltText.replace(/-/g, '+').replace(/_/g, '/')), (char) => char.charCodeAt(0));
-  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveBits']);
-  const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', salt, iterations, hash: 'SHA-256' }, key, 256);
-  return base64Url(new Uint8Array(bits)) === expected;
+  const [algorithm, nText, rText, pText, saltText, expected] = String(encoded).split('$');
+  const N = Number(nText), r = Number(rText), p = Number(pText);
+  if (algorithm !== 'scrypt' || N !== 16384 || r !== 8 || p !== 1 || !saltText || !expected) return false;
+  const actual = await new Promise((resolve, reject) => scrypt(password, saltText, 64, { N, r, p, maxmem: 64 * 1024 * 1024 }, (error, key) => error ? reject(error) : resolve(key)));
+  return base64Url(actual) === expected;
 }
 
 function token() {
