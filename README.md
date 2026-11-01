@@ -49,7 +49,7 @@
 
 ## 로컬에서 확인
 
-Cloudflare Pages Functions 및 D1을 포함해 실행하려면 Node.js와 Wrangler가 필요합니다. 문의 API는 `/api/inquiries`에서 POST(저장)를 제공하고, GET(목록) 및 DELETE(삭제)는 Cloudflare Access로 인증된 관리자만 사용할 수 있습니다. 데이터는 단일 `inquiries` 테이블에 저장합니다.
+Cloudflare Pages Functions 및 D1을 포함해 실행하려면 Node.js와 Wrangler가 필요합니다. 문의 API는 `/api/inquiries`에서 POST(저장)를 제공하고, GET(목록), PUT(수정) 및 DELETE(소프트 삭제)는 Cloudflare Access로 인증된 관리자만 사용할 수 있습니다. 데이터는 단일 `inquiries` 테이블에 저장하며 `created_at`, `updated_at`, `deleted_at` 시각을 기록합니다.
 
 ```sh
 npm install --save-dev wrangler
@@ -80,7 +80,8 @@ npx wrangler d1 migrations apply compose-coffee-inquiries --remote
 | `contact.css` | 문의하기 페이지의 폼 레이아웃과 반응형 스타일 |
 | `contact.js` | 문의 폼 및 D1 API 연결, 내역 조회·삭제, 모바일 메뉴 동작 |
 | `functions/api/inquiries.js` | 문의 데이터 저장·조회·삭제 Pages Function API |
-| `migrations/0001_create_inquiries.sql` | 단일 문의 내역 테이블 마이그레이션 |
+| `migrations/0001_create_inquiries.sql` | 문의 내역 테이블 생성 마이그레이션 |
+| `migrations/0002_add_update_and_delete_timestamps.sql` | 수정·삭제 시각 컬럼 추가 마이그레이션 |
 | `wrangler.toml` | Cloudflare Pages 설정 및 D1 바인딩 |
 | `styles.css` | 색상, 레이아웃, 반응형 및 애니메이션 스타일 |
 | `app.js` | 랜덤 메뉴·사진, 필터, 검색, 상세 페이지 동작 |

@@ -26,12 +26,12 @@
     clearButton.hidden = inquiries.length === 0;
     inquiryList.innerHTML = inquiries.map((item) => `
       <article class="inquiry-card">
-        <div class="inquiry-card-heading"><span class="inquiry-topic">${escapeHtml(item.topic)}</span><time>${escapeHtml(new Date(item.created_at).toLocaleString('ko-KR'))}</time></div>
+        <div class="inquiry-card-heading"><span class="inquiry-topic">${escapeHtml(item.topic)}</span><time>작성 ${escapeHtml(new Date(item.created_at).toLocaleString('ko-KR'))}</time></div>
         <h3>${escapeHtml(item.topic)} 문의</h3>
         <p class="inquiry-card-meta">${escapeHtml(item.name)} · ${escapeHtml(item.email)}</p>
         <p class="inquiry-card-message">${escapeHtml(item.message).replace(/\r?\n/g, '<br>')}</p>
         <div class="inquiry-card-actions">
-          <span class="inquiry-status">데이터베이스 저장됨</span>
+          <span class="inquiry-status">${item.updated_at ? `수정 ${escapeHtml(new Date(item.updated_at).toLocaleString('ko-KR'))}` : '수정 이력 없음'}</span>
           <button class="inquiry-delete" type="button" data-delete-inquiry="${escapeHtml(item.id)}">삭제</button>
         </div>
       </article>`).join('');

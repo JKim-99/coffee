@@ -30,7 +30,7 @@ export async function onRequestGet({ env, request }) {
   const rawLimit = Number(url.searchParams.get('limit') || 50);
   const limit = Number.isInteger(rawLimit) ? Math.min(Math.max(rawLimit, 1), 100) : 50;
   const { results } = await env.DB.prepare(
-    'SELECT id, name, email, topic, message, created_at FROM inquiries ORDER BY created_at DESC, rowid DESC LIMIT ?'
+    'SELECT id, name, email, topic, message, created_at, updated_at, deleted_at FROM inquiries WHERE deleted_at IS NULL ORDER BY created_at DESC, rowid DESC LIMIT ?'
   ).bind(limit).all();
 
   return json({ inquiries: results });
@@ -59,10 +59,44 @@ export async function onRequestPost({ env, request }) {
   const id = crypto.randomUUID();
   const createdAt = new Date().toISOString();
   await env.DB.prepare(
-    'INSERT INTO inquiries (id, name, email, topic, message, created_at) VALUES (?, ?, ?, ?, ?, ?)'
-  ).bind(id, name, email, topic, message, createdAt).run();
+    'INSERT INTO inquiries (id, name, email, topic, message, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)'
+  ).bind(id, name, email, topic, message, createdAt, createdAt).run();
 
-  return json({ inquiry: { id, name, email, topic, message, created_at: createdAt } }, 201);
+  return json({ inquiry: { id, name, email, topic, message, created_at: createdAt, updated_at: createdAt, deleted_at: null } }, 201);
+}
+
+export async function onRequestPut({ env, request }) {
+  const unauthorized = requireAdmin(request);
+  if (unauthorized) return unauthorized;
+  if (!env.DB) return json({ error: '문의 데이터베이스가 설정되지 않았습니다.' }, 503);
+
+  const id = new URL(request.url).searchParams.get('id');
+  if (!id || id.length > 100) return json({ error: '수정할 문의 ID가 필요합니다.' }, 400);
+
+  let body;
+  try {
+    body = await request.json();
+  } catch (error) {
+    return json({ error: '요청 본문은 올바른 JSON이어야 합니다.' }, 400);
+  }
+
+  const name = typeof body.name === 'string' ? body.name.trim() : '';
+  const email = typeof body.email === 'string' ? body.email.trim() : '';
+  const topic = typeof body.topic === 'string' ? body.topic.trim() : '';
+  const message = typeof body.message === 'string' ? body.message.trim() : '';
+
+  if (!name || name.length > 60) return json({ error: '이름은 1~60자로 입력해 주세요.' }, 400);
+  if (!isValidEmail(email)) return json({ error: '올바른 이메일 주소를 입력해 주세요.' }, 400);
+  if (!allowedTopics.has(topic)) return json({ error: '문의 유형이 올바르지 않습니다.' }, 400);
+  if (!message || message.length > 3000) return json({ error: '문의 내용은 1~3000자로 입력해 주세요.' }, 400);
+
+  const updatedAt = new Date().toISOString();
+  const result = await env.DB.prepare(
+    'UPDATE inquiries SET name = ?, email = ?, topic = ?, message = ?, updated_at = ? WHERE id = ? AND deleted_at IS NULL'
+  ).bind(name, email, topic, message, updatedAt, id).run();
+  if (!result.meta.changes) return json({ error: '수정할 문의 내역을 찾을 수 없습니다.' }, 404);
+
+  return json({ success: true, updated_at: updatedAt });
 }
 
 export async function onRequestDelete({ env, request }) {
@@ -73,7 +107,10 @@ export async function onRequestDelete({ env, request }) {
   const id = new URL(request.url).searchParams.get('id');
   if (!id || id.length > 100) return json({ error: '삭제할 문의 ID가 필요합니다.' }, 400);
 
-  const result = await env.DB.prepare('DELETE FROM inquiries WHERE id = ?').bind(id).run();
+  const deletedAt = new Date().toISOString();
+  const result = await env.DB.prepare(
+    'UPDATE inquiries SET deleted_at = ?, updated_at = ? WHERE id = ? AND deleted_at IS NULL'
+  ).bind(deletedAt, deletedAt, id).run();
   if (!result.meta.changes) return json({ error: '문의 내역을 찾을 수 없습니다.' }, 404);
-  return json({ success: true });
+  return json({ success: true, deleted_at: deletedAt });
 }
