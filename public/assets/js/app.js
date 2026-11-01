@@ -16,21 +16,23 @@
     .trim();
   let favoriteMenuIds = new Set((window.COMPOSE_FAVORITE_IDS || []).map(String));
 
-  document.querySelectorAll('.nav-toggle').forEach((button) => {
-    button.addEventListener('click', () => {
-      const expanded = button.getAttribute('aria-expanded') === 'true';
-      button.setAttribute('aria-expanded', String(!expanded));
-      button.setAttribute('aria-label', expanded ? '메뉴 열기' : '메뉴 닫기');
-      document.getElementById(button.getAttribute('aria-controls'))?.classList.toggle('is-open', !expanded);
-    });
-  });
 
+
+  function imageFallback(image) {
+    if (image.dataset.fallbackShown) return;
+    image.dataset.fallbackShown = 'true';
+    const fallback = document.createElement('span');
+    fallback.className = 'image-fallback';
+    fallback.textContent = `${image.alt || '메뉴'} · 사진을 불러올 수 없습니다`;
+    image.hidden = true;
+    image.after(fallback);
+  }
+  // Capture failures from images inserted after the initial page load as well.
+  document.addEventListener('error', (event) => {
+    if (event.target.tagName === 'IMG') imageFallback(event.target);
+  }, true);
   document.querySelectorAll('img').forEach((image) => {
-    image.addEventListener('error', () => {
-      image.classList.add('image-unavailable');
-      image.alt = image.alt || '이미지를 불러올 수 없습니다';
-      image.removeAttribute('src');
-    }, { once: true });
+    if (image.complete && image.naturalWidth === 0) imageFallback(image);
   });
 
   const heroDrinkImages = [
@@ -51,13 +53,18 @@
     });
   }
 
+  function caffeineSummary(item) {
+    const value = item.nutrition?.split(';').map((part) => part.trim()).find((part) => part.startsWith('카페인 '));
+    return value || '카페인 정보 없음';
+  }
+
   function cardMarkup(item, index) {
     const detailUrl = `menu-detail.html?id=${encodeURIComponent(item.id)}`;
     const name = displayName(item.name);
     const isFavorite = favoriteMenuIds.has(String(item.id));
     return `<article class="menu-card" data-menu-id="${escapeHtml(item.id)}" style="--card-index:${index};animation-delay:${index * 180}ms">
       <div class="menu-card-image"><a class="menu-card-image-link" href="${detailUrl}" aria-label="${escapeHtml(name)} 메뉴 상세 보기"><img src="${escapeHtml(item.image)}" alt="${escapeHtml(name)}" loading="lazy"><span class="card-arrow" aria-hidden="true">↗</span></a><button class="favorite-toggle${isFavorite ? ' is-favorite' : ''}" type="button" data-favorite-id="${escapeHtml(item.id)}" aria-pressed="${isFavorite}" aria-label="${escapeHtml(name)} 선호 메뉴 ${isFavorite ? '해제' : '등록'}">${isFavorite ? '♥' : '♡'}</button></div>
-      <a class="menu-card-copy" href="${detailUrl}"><small>${escapeHtml(item.category)}</small><h3>${escapeHtml(name)}</h3></a>
+      <a class="menu-card-copy" href="${detailUrl}"><small>${escapeHtml(item.category)}</small><h3>${escapeHtml(name)}</h3><span class="menu-card-facts">${escapeHtml(caffeineSummary(item))}</span></a>
     </article>`;
   }
 
@@ -69,19 +76,7 @@
       [favorites[index], favorites[randomIndex]] = [favorites[randomIndex], favorites[index]];
     }
     favorites.length = Math.min(12, favorites.length);
-    featuredGrid.innerHTML = favorites.map(cardMarkup).join('') || '<p>메뉴 자료를 불러오지 못했습니다.</p>';
-    document.querySelectorAll('.section-heading, .brand-callout-inner').forEach((element) => element.classList.add('reveal'));
-    if ('IntersectionObserver' in window) {
-      const observer = new IntersectionObserver((entries) => entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          observer.unobserve(entry.target);
-        }
-      }), { threshold: 0.14 });
-      document.querySelectorAll('.reveal').forEach((element) => observer.observe(element));
-    } else {
-      document.querySelectorAll('.reveal').forEach((element) => element.classList.add('is-visible'));
-    }
+    featuredGrid.innerHTML = favorites.map(cardMarkup).join('') || '<p>메뉴 자료를 불러오지 못했습니다. <a href="menu.html">전체 메뉴 보기</a></p>';
   }
 
   let renderMenu = () => {};
@@ -160,8 +155,10 @@
         <div class="detail-layout">
           <div class="detail-image-wrap"><img src="${escapeHtml(item.image)}" alt="${escapeHtml(name)}" fetchpriority="high"></div>
           <div class="detail-copy"><p class="eyebrow">${escapeHtml(item.category)}</p><h1>${escapeHtml(name)}</h1>
+            <p class="favorite-return-note">${new URLSearchParams(window.location.search).get('saveFavorite') === '1' ? '선택한 메뉴로 돌아왔습니다. 자동 저장되지 않습니다. 아래 하트를 눌러 선호 메뉴에 저장해 주세요.' : '하트를 눌러 이 메뉴를 선호 메뉴로 저장할 수 있습니다.'}</p>
+            <button class="favorite-toggle detail-favorite${favoriteMenuIds.has(String(item.id)) ? ' is-favorite' : ''}" type="button" data-favorite-id="${escapeHtml(item.id)}" aria-pressed="${favoriteMenuIds.has(String(item.id))}" aria-label="${escapeHtml(name)} 선호 메뉴 ${favoriteMenuIds.has(String(item.id)) ? '해제' : '등록'}">${favoriteMenuIds.has(String(item.id)) ? '♥' : '♡'}</button>
             <h2 class="nutrition-title">제품 영양 정보</h2><ul class="nutrition-list">${nutritionMarkup}</ul>
-            <p class="detail-note">제품 정보는 공식 공개 자료를 바탕으로 정리했으며, 제공 시점과 판매 매장에 따라 달라질 수 있습니다. 최신 정보는 공식 상세 페이지에서 확인해 주세요.</p>
+            <p class="detail-note">제품 정보는 공식 공개 자료를 바탕으로 정리했으며, 제공 시점과 판매 매장에 따라 달라질 수 있습니다. 가격·알레르기 정보는 이 시안에서 제공하지 않습니다. 카페인 미표시는 무카페인을 뜻하지 않습니다. 구매 전 최신 정보는 공식 상세 페이지와 매장에서 확인해 주세요.</p>
             <div class="detail-actions"><a class="button button-dark" href="${escapeHtml(item.detailUrl)}" target="_blank" rel="noopener">공식 제품 정보 <span aria-hidden="true">↗</span></a><a class="button button-outline" href="menu.html">다른 메뉴 보기</a></div>
           </div>
         </div>`;

@@ -22,13 +22,14 @@
 
 ## 기술 구성
 
-- Frontend: 정적 HTML, CSS, 브라우저 JavaScript. 빌드 프레임워크는 사용하지 않는다.
+- Frontend: `public/` 아래 정적 HTML, `public/assets/css/`의 CSS, `public/assets/js/`의 브라우저 JavaScript. 빌드 프레임워크는 사용하지 않는다.
 - Hosting/API: Cloudflare Pages 및 Pages Functions (`/functions/api/...`).
 - Database: Cloudflare D1(SQLite semantics), DB binding 이름은 `DB`.
 - 독립 Worker: `workers/api.js`, 설정은 `wrangler.worker.toml`. D1 연결 상태를 `/health`로 확인한다.
 - Pages 설정: `wrangler.toml`.
 - D1 migrations: `/migrations/0001...0006...` 순서로 관리한다.
-- 메뉴 기준 자료: `menu.md`; 브라우저용 데이터는 `menu-data.js`.
+- 메뉴 기준 자료: `public/assets/data/menu.md`; 브라우저용 데이터는 `public/assets/data/menu-data.js`.
+- 문서: `docs/`; 회귀 검사: `tests/` (`npm test`). 로컬 실행: 저장소 루트에서 `npm run dev`; 배포 출력: `public/`.
 - 개발 도구: `npm`/Node.js, Wrangler (`npx wrangler`). `node_modules/`, `.wrangler/`는 버전 관리하지 않는다.
 
 ## 현재 데이터/인증 동작

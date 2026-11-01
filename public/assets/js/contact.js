@@ -1,15 +1,6 @@
 (function () {
   'use strict';
 
-  document.querySelectorAll('.nav-toggle').forEach((button) => {
-    button.addEventListener('click', () => {
-      const expanded = button.getAttribute('aria-expanded') === 'true';
-      button.setAttribute('aria-expanded', String(!expanded));
-      button.setAttribute('aria-label', expanded ? '메뉴 열기' : '메뉴 닫기');
-      document.getElementById(button.getAttribute('aria-controls'))?.classList.toggle('is-open', !expanded);
-    });
-  });
-
   const form = document.getElementById('contact-form');
   const status = document.getElementById('form-status');
   const inquiryList = document.getElementById('inquiry-list');
@@ -87,8 +78,21 @@
     };
 
     submitButton.disabled = true;
-    status.textContent = '문의 내역을 저장하고 있습니다.';
+    status.textContent = '로그인 상태를 확인하고 있습니다.';
     try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 10000);
+      let session;
+      try {
+        session = await fetch('/api/auth/me', { credentials: 'same-origin', signal: controller.signal });
+      } finally { clearTimeout(timer); }
+      if (session.status === 401) {
+        status.textContent = '로그인 후 문의를 작성해 주세요.';
+        window.location.href = 'login.html?next=%2Fcontact.html';
+        return;
+      }
+      if (!session.ok || !(await session.json()).user) throw new Error('로그인 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+      status.textContent = '문의 내역을 저장하고 있습니다.';
       const response = await fetch('/api/inquiries', {
         method: 'POST',
         headers: { 'content-type': 'application/json', accept: 'application/json' },
@@ -155,4 +159,5 @@
     clearButton.disabled = false;
     await tryAdminHistory();
   });
+  form.querySelector('button[type="submit"]').disabled = false;
 })();

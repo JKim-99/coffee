@@ -4,6 +4,23 @@
   const status = document.getElementById('auth-status');
   const signupForm = document.getElementById('signup-form');
   const loginForm = document.getElementById('login-form');
+  // Only navigate back to a known local page, never a third-party URL.
+  function returnDestination() {
+    const next = new URLSearchParams(window.location.search).get('next');
+    if (!next || /[\\\r\n]/.test(next)) return 'index.html';
+    try {
+      const url = new URL(next, window.location.href);
+      const allowed = new Set(['/', '/index.html', '/menu.html', '/menu', '/menu-detail.html', '/menu-detail', '/contact.html', '/contact', '/inquiries.html', '/inquiries', '/inquiry-detail.html', '/inquiry-detail', '/account.html', '/account']);
+      if (url.origin !== window.location.origin || !allowed.has(url.pathname)) return 'index.html';
+      return url.pathname + url.search + url.hash;
+    } catch { return 'index.html'; }
+  }
+  const destination = returnDestination();
+  if (destination !== 'index.html') {
+    document.querySelectorAll('a[href="signup.html"], a[href="login.html"]').forEach((link) => {
+      link.href += `?next=${encodeURIComponent(destination)}`;
+    });
+  }
   const rememberedEmailKey = 'composecoffee.remembered-email.v1';
 
   if (loginForm) {
@@ -54,7 +71,7 @@
         });
         signupForm.reset();
         status.textContent = '회원가입이 완료되었습니다. 로그인해 주세요.';
-        window.setTimeout(() => { window.location.href = 'login.html?registered=1'; }, 900);
+        window.setTimeout(() => { window.location.href = `login.html?registered=1&next=${encodeURIComponent(returnDestination())}`; }, 900);
       } catch (error) {
         status.textContent = error.message || '요청을 처리하지 못했습니다. 네트워크 연결을 확인하고 다시 시도해 주세요.';
       } finally {
@@ -100,7 +117,7 @@
         status.textContent = `${user.nickname}님, 로그인되었습니다.`;
         if (accountLink) accountLink.hidden = false;
         if (logoutButton) logoutButton.hidden = false;
-        window.setTimeout(() => { window.location.href = 'index.html'; }, 600);
+        window.setTimeout(() => { window.location.href = returnDestination(); }, 600);
       } catch (error) {
         status.textContent = error.message;
       } finally {

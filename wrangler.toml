@@ -1,5 +1,5 @@
 name = "compose-coffee-site"
-pages_build_output_dir = "."
+pages_build_output_dir = "public"
 compatibility_date = "2026-10-30"
 compatibility_flags = ["nodejs_compat"]
 

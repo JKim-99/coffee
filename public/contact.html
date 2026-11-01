@@ -8,10 +8,10 @@
   <meta property="og:title" content="문의하기 | 컴포즈커피">
   <meta name="theme-color" content="#f7c600">
   <title>문의하기 | 컴포즈커피</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="contact.css">
-  <script src="contact.js" defer></script>
-  <script src="site-auth.js" defer></script>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/contact.css">
+  <script src="assets/js/contact.js" defer></script>
+  <script src="assets/js/site-auth.js" defer></script>
 </head>
 <body class="contact-page">
   <a class="skip-link" href="#main">본문 바로가기</a>
@@ -42,10 +42,12 @@
         <p class="eyebrow">CONTACT COMPOSE</p>
         <h2 id="contact-form-title">무엇을 도와드릴까요?</h2>
         <p>아래 양식으로 문의를 남기면 저장된 내역을 확인할 수 있습니다.</p>
-        <a class="contact-phone" href="tel:18995003"><span>고객상담 전화</span><strong>1899-5003</strong></a>
+      <p class="content-fallback">이 사이트 운영자에게 보내는 시안 문의입니다. 공식 고객센터로 전달되지 않습니다. 로그인 후 작성해 주세요.</p>
+      <noscript><p class="content-fallback">문의 작성에는 JavaScript와 로그인이 필요합니다. 공식 문의는 <a href="https://composecoffee.com/">공식 홈페이지</a>를 이용해 주세요.</p></noscript>
+        <a class="contact-phone" href="tel:18995003"><span>공식 고객상담 전화</span><strong>1899-5003</strong></a>
       </div>
 
-      <form class="contact-form" id="contact-form" action="mailto:help@composecoffee.com" method="post" enctype="text/plain">
+      <form class="contact-form" id="contact-form" method="post">
         <label for="contact-name">이름 <span aria-hidden="true">*</span></label>
         <input id="contact-name" name="name" type="text" autocomplete="name" required maxlength="60" placeholder="이름을 입력해 주세요">
 
@@ -67,7 +69,7 @@
         <label for="contact-message">문의 내용 <span aria-hidden="true">*</span></label>
         <textarea id="contact-message" name="message" rows="7" required maxlength="3000" placeholder="문의하실 내용을 입력해 주세요."></textarea>
         <p class="form-note">문의 내용은 안전한 연결을 통해 서비스 데이터베이스에 저장됩니다.</p>
-        <button class="button button-dark" type="submit">문의하기 <span aria-hidden="true">→</span></button>
+        <button class="button button-dark" type="submit" disabled>문의하기 <span aria-hidden="true">→</span></button>
         <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
       </form>
     </section>

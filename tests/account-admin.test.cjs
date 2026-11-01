@@ -3,7 +3,8 @@ const assert = require('node:assert/strict');
 const vm = require('node:vm');
 const { readFileSync } = require('node:fs');
 const { resolve } = require('node:path');
-const source = (file) => readFileSync(resolve(__dirname, '..', file), 'utf8');
+const assetPath = (file) => file.endsWith('.html') ? ['public', file] : file.endsWith('.css') ? ['public', 'assets', 'css', file] : ['public', 'assets', 'js', file];
+const source = (file) => readFileSync(resolve(__dirname, '..', ...assetPath(file)), 'utf8');
 const settle = () => new Promise((resolve) => setImmediate(resolve));
 function element() {
   return {
@@ -18,7 +19,7 @@ function element() {
 }
 function auth({ withLogin = false, failLogout = false } = {}) {
   const logout = element(), account = element(), login = element();
-  const nav = { querySelector(selector) {
+  const nav = { classList: { add() {} }, querySelector(selector) {
     if (selector === 'a[href="login.html"]') return withLogin ? login : null;
     if (selector === '#nav-logout-link') return logout;
     if (selector === '#nav-account-link' || selector === 'a[href="account.html"]') return account;

@@ -2,7 +2,6 @@
   'use strict';
 
   const nav = document.querySelector('.primary-nav');
-  if (!nav) return;
 
   document.querySelectorAll('.nav-toggle').forEach((button) => {
     button.addEventListener('click', () => {
@@ -13,24 +12,36 @@
     });
   });
 
-  const contactHeaderLink = nav.querySelector('a[href="contact.html"]');
-  contactHeaderLink?.addEventListener('click', async (event) => {
-    event.preventDefault();
-    try {
-      const response = await fetch('/api/auth/me', {
-        credentials: 'same-origin',
-        headers: { accept: 'application/json' }
-      });
-      if (response.ok) {
-        window.location.href = contactHeaderLink.href;
-        return;
+  document.querySelectorAll('a[href="contact.html"], a[href="/contact.html"], a[href="/contact"]').forEach((link) => {
+    link.addEventListener('click', async (event) => {
+      event.preventDefault();
+      if (link.getAttribute('aria-busy') === 'true') return;
+      link.setAttribute('aria-busy', 'true');
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 10000);
+      try {
+        const response = await fetch('/api/auth/me', {
+          credentials: 'same-origin', headers: { accept: 'application/json' }, signal: controller.signal
+        });
+        if (response.status === 401) {
+          window.alert('로그인이 필요합니다. 로그인 후 문의하기로 돌아옵니다.');
+          window.location.href = 'login.html?next=%2Fcontact.html';
+        } else if (response.ok && (await response.json()).user) {
+          window.location.href = link.href;
+        } else {
+          throw new Error('session unavailable');
+        }
+      } catch (error) {
+        window.alert('로그인 상태를 확인하지 못했습니다. 연결을 확인하고 문의하기를 다시 눌러 주세요.');
+      } finally {
+        clearTimeout(timer);
+        link.removeAttribute('aria-busy');
       }
-    } catch (error) {
-      // Treat an unavailable session check as signed out; the protected flow requires login.
-    }
-    window.alert('로그인이 필요합니다. 로그인 페이지로 이동합니다.');
-    window.location.href = 'login.html';
+    });
   });
+
+  if (!nav) return;
+  nav.classList.add('is-enhanced');
 
   const loginLink = nav.querySelector('a[href="login.html"]');
 

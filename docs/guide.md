@@ -6,7 +6,7 @@
 
 - 브랜드/홈페이지 참고: [컴포즈커피 공식 홈페이지](https://composecoffee.com/index1)
 - 브랜드 소개 및 연혁 참고: [About Compose Coffee](https://composecoffee.com/about)
-- 메뉴·사진·영양정보 데이터: 이 프로젝트의 [`menu.md`](./menu.md)
+- 메뉴·사진·영양정보 데이터: 이 프로젝트의 [`menu.md`](../public/assets/data/menu.md)
 - 공식 메뉴 페이지: [컴포즈커피 메뉴](https://composecoffee.com/index.php?mid=compose&act=dispCafemenuGalleryList)
 - 공식 페이지에서 확인한 대표 문구: **“커피를 커피답게”**, **“고품질 커피브랜드, 컴포즈”**
 
@@ -53,7 +53,7 @@
 - 선정된 추천 메뉴 12개는 화면에 순서대로 나타나도록 카드별 애니메이션 지연 시간을 적용한다. 모션 감소 설정을 존중하고, 애니메이션을 줄이더라도 모든 메뉴가 표시되도록 한다.
 - 상세 페이지에는 제품명, 큰 제품 사진, 컵 용량 및 `menu.md`에 수록된 영양 값을 제공한다.
 - 영양 값에는 공식 단위(kcal, mg, g, ml)를 함께 표시한다. `정보 없음`은 누락 상태로 취급하고 임의의 0으로 바꾸지 않는다.
-- 메뉴 데이터에는 [`menu.md`](./menu.md)의 공식 상세 페이지 링크와 사진 URL을 우선 사용한다. 링크·사진의 유효성을 배포 전 확인한다.
+- 메뉴 데이터에는 [`menu.md`](../public/assets/data/menu.md)의 공식 상세 페이지 링크와 사진 URL을 우선 사용한다. 링크·사진의 유효성을 배포 전 확인한다.
 - 추천 메뉴와 카테고리 소속이 중복되더라도 원본 분류를 보존하고, 화면상 중복 여부는 콘텐츠 정책에 따라 결정한다.
 
 ## 4. 시각 디자인 및 콘텐츠 원칙
@@ -103,4 +103,4 @@
 - [공식 메뉴·영양 정보](https://composecoffee.com/index.php?mid=compose&act=dispCafemenuGalleryList)
 - [매장 찾기](https://composecoffee.com/findstore)
 - [고객의 소리](https://composecoffee.com/custumer)
-- [프로젝트 메뉴·사진·영양 정보 정리](./menu.md)
+- [프로젝트 메뉴·사진·영양 정보 정리](../public/assets/data/menu.md)
