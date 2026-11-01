@@ -18,4 +18,25 @@
 .form-note,.form-status{font-size:10px;line-height:1.7;color:var(--muted);margin:0}
 .contact-form .button{justify-self:start;margin-top:10px;border:0;cursor:pointer}
 .form-status:empty{display:none}
+.inquiry-history{padding-top:0;padding-bottom:110px;scroll-margin-top:32px}
+.history-heading{display:flex;align-items:end;justify-content:space-between;gap:20px;border-bottom:1px solid var(--line);padding-bottom:20px}
+.history-heading .eyebrow{margin:0 0 10px}
+.history-heading h2{font-size:clamp(30px,4vw,42px);letter-spacing:-.07em;margin:0}
+.history-note{font-size:11px;line-height:1.7;color:var(--muted);margin:18px 0 22px}
+.history-empty{padding:34px 18px;text-align:center;background:#f4f2eb;color:var(--muted);font-size:12px}
+.history-empty[hidden],.history-clear[hidden]{display:none}
+.history-clear,.inquiry-delete{border:1px solid #d7d4c9;background:transparent;color:var(--ink);font:inherit;cursor:pointer}
+.history-clear{padding:10px 14px;font-size:11px}
+.history-clear:hover,.inquiry-delete:hover{background:var(--ink);border-color:var(--ink);color:#fff}
+.inquiry-list{display:grid;gap:14px}
+.inquiry-card{padding:22px;background:#fff;border:1px solid var(--line)}
+.inquiry-card-heading,.inquiry-card-actions{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.inquiry-topic{font-size:10px;font-weight:700;padding:6px 9px;background:#fff4bd;border-radius:20px}
+.inquiry-card time,.inquiry-card-meta,.inquiry-status{font-size:10px;color:var(--muted)}
+.inquiry-card h3{font-size:16px;line-height:1.5;margin:16px 0 6px}
+.inquiry-card-meta{margin:0}
+.inquiry-card-message{font-size:12px;line-height:1.8;white-space:normal;overflow-wrap:anywhere;margin:16px 0 20px}
+.inquiry-card-actions{border-top:1px solid var(--line);padding-top:14px}
+.inquiry-delete{padding:7px 11px;font-size:10px}
 @media(max-width:680px){.contact-content{grid-template-columns:1fr;gap:38px;padding-top:58px;padding-bottom:76px}.contact-intro{position:static}.contact-intro h2{font-size:34px}.contact-phone{margin-top:23px}.contact-form .button{width:100%}}
+@media(max-width:680px){.inquiry-history{padding-bottom:76px}.history-heading{align-items:start}.history-clear{padding:9px;font-size:10px}.inquiry-card{padding:17px}.inquiry-card-heading{align-items:flex-start}.inquiry-card time{text-align:right}}

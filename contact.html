@@ -39,7 +39,7 @@
       <div class="contact-intro">
         <p class="eyebrow">CONTACT COMPOSE</p>
         <h2 id="contact-form-title">무엇을 도와드릴까요?</h2>
-        <p>고객상담 전화로 문의하시거나, 아래 양식을 작성해 메일 앱에서 문의를 보내실 수 있습니다.</p>
+        <p>아래 양식으로 문의 내용을 작성하고, 문의 내역에서 이 브라우저에 저장된 기록을 확인할 수 있습니다.</p>
         <a class="contact-phone" href="tel:18995003"><span>고객상담 전화</span><strong>1899-5003</strong></a>
       </div>
 
@@ -61,18 +61,31 @@
 
         <label for="contact-message">문의 내용 <span aria-hidden="true">*</span></label>
         <textarea id="contact-message" name="message" rows="7" required maxlength="3000" placeholder="문의하실 내용을 입력해 주세요."></textarea>
-        <p class="form-note">이 페이지는 정적 웹페이지라 문의 내용이 서버로 전송되지 않습니다. 제출하면 기기의 기본 메일 앱이 열립니다.</p>
-        <button class="button button-dark" type="submit">메일로 문의 보내기 <span aria-hidden="true">↗</span></button>
+        <p class="form-note">문의 내용은 이 브라우저에만 저장되며 서버로 전송되지 않습니다. 저장 후 메일 앱에서 전송할 수도 있습니다.</p>
+        <button class="button button-dark" type="submit">문의 내역 저장 <span aria-hidden="true">↓</span></button>
         <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
       </form>
+    </section>
+
+    <section class="inquiry-history section-wrap" aria-labelledby="inquiry-history-title">
+      <div class="history-heading">
+        <div>
+          <p class="eyebrow">YOUR INQUIRIES</p>
+          <h2 id="inquiry-history-title">문의 내역</h2>
+        </div>
+        <button class="history-clear" id="clear-inquiries" type="button" hidden>내역 전체 삭제</button>
+      </div>
+      <p class="history-note">저장된 내역은 현재 브라우저에만 보관됩니다. 브라우저 데이터 삭제 시 함께 삭제될 수 있습니다.</p>
+      <p class="history-empty" id="history-empty">저장된 문의 내역이 없습니다.</p>
+      <div class="inquiry-list" id="inquiry-list" aria-live="polite"></div>
     </section>
   </main>
 
   <footer class="site-footer">
     <a class="brand brand-footer" href="index.html"><span class="brand-mark" aria-hidden="true">C</span><span class="brand-word">COMPOSE<span>COFFEE</span></span></a>
-    <div class="footer-links"><a href="contact.html" aria-current="page">문의하기</a><a href="https://composecoffee.com/custumer" target="_blank" rel="noopener">고객의 소리</a></div>
+    <div class="footer-links"><a href="contact.html" aria-current="page">문의하기</a></div>
     <p>고객상담 <a href="tel:18995003">1899-5003</a> <span>·</span> 창업문의 <a href="tel:18995685">1899-5685</a></p>
-    <small>문의 내용은 메일 앱을 통해 전송됩니다. 공식 상담 채널은 <a href="https://composecoffee.com/custumer" target="_blank" rel="noopener">컴포즈커피 고객의 소리</a>를 이용해 주세요.</small>
+    <small>문의 내용은 이 브라우저에 저장되며 서버로 전송되지 않습니다.</small>
   </footer>
 </body>
 </html>
