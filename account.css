@@ -4,10 +4,12 @@
 .account-status{font-size:13px;line-height:1.7;color:var(--muted)}
 .account-status[hidden]{display:none}
 .my-inquiry-list{display:grid;gap:12px}
-.my-inquiry-card{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:18px;padding:20px 22px;background:#fff;border:1px solid var(--line)}
-.my-inquiry-title{font-size:14px;font-weight:700;line-height:1.5}
+.my-inquiry-card{display:grid;grid-template-columns:max-content max-content 1fr;grid-template-areas:"status topic date" "title title title";align-items:center;justify-content:start;gap:12px 14px;padding:20px 22px;background:#fff;border:1px solid var(--line)}
+.my-inquiry-card .inquiry-status-badge{grid-area:status}
+.my-inquiry-card .inquiry-topic{grid-area:topic;width:fit-content;max-width:100%;white-space:nowrap}
+.my-inquiry-title{grid-area:title;display:block;width:100%;font-size:16px;font-weight:700;line-height:1.65;overflow-wrap:anywhere;white-space:normal}
 .my-inquiry-title:hover{text-decoration:underline;text-underline-offset:4px}
-.my-inquiry-card time{font-size:10px;color:var(--muted);white-space:nowrap}
+.my-inquiry-card time{grid-area:date;justify-self:end;font-size:10px;color:var(--muted);white-space:nowrap}
 .inquiry-status-badge{display:inline-flex;width:max-content;align-items:center;padding:6px 10px;border-radius:3px;background:#e7e7e7;color:#555;font-size:10px;font-weight:700}
 .inquiry-status-badge.is-replied{background:var(--yellow);color:var(--ink)}
 .inquiry-reply{margin-top:26px;padding-top:20px;border-top:1px solid var(--line)}
@@ -19,4 +21,4 @@
 .inquiry-detail-card .inquiry-card-message{white-space:pre-wrap;padding-top:22px;border-top:1px solid var(--line)}
 .detail-updated{font-size:10px;color:var(--muted);text-align:right;margin:16px 0 0}
 .inquiries-panel>.history-empty[hidden]{display:none}
-@media(max-width:680px){.inquiries-panel{padding-top:42px;padding-bottom:70px}.my-inquiry-card{grid-template-columns:1fr auto;gap:10px 12px;padding:17px}.my-inquiry-card .inquiry-topic,.my-inquiry-card .inquiry-status-badge{grid-column:1/-1;justify-self:start}.my-inquiry-title{font-size:13px}.my-inquiry-card time{font-size:9px}.inquiry-detail-card h2{margin:18px 0}}
+@media(max-width:680px){.inquiries-panel{padding-top:42px;padding-bottom:70px}.my-inquiry-card{grid-template-columns:max-content max-content 1fr;gap:10px 8px;padding:16px}.my-inquiry-card .inquiry-topic,.my-inquiry-card .inquiry-status-badge{grid-column:auto;justify-self:start}.my-inquiry-card time{font-size:9px}.my-inquiry-title{font-size:14px;grid-column:1/-1}.inquiry-detail-card h2{margin:18px 0}}
