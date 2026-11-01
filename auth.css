@@ -1,0 +1,28 @@
+.auth-nav{display:flex;align-items:center;gap:22px;font-size:12px;font-weight:700}
+.auth-nav a{padding:10px 14px;border:1px solid var(--ink);border-radius:3px;transition:background .2s,color .2s}
+.auth-nav a:hover{background:var(--ink);color:#fff}
+.auth-main{min-height:calc(100vh - 327px);padding:64px 20px 84px;display:grid;place-items:center;background:var(--cream)}
+.auth-card{width:min(100%,460px);padding:clamp(28px,6vw,54px);background:#fff;border:1px solid var(--line);box-shadow:0 20px 60px rgba(40,34,9,.07)}
+.auth-card>.eyebrow{margin:0 0 12px}
+.auth-card h1{font-size:clamp(36px,7vw,48px);letter-spacing:-.07em;margin:0}
+.auth-description{font-size:13px;color:var(--muted);margin:12px 0 30px}
+.auth-form{display:grid;gap:10px}
+.auth-form>label,.gender-fieldset legend{font-size:12px;font-weight:700;margin-top:10px}
+.auth-form>input{width:100%;height:49px;border:1px solid #dcd9cf;border-radius:2px;background:#fff;padding:0 14px;font:inherit;font-size:13px;outline:0;transition:border-color .2s,box-shadow .2s}
+.auth-form>input:focus{border-color:var(--ink);box-shadow:0 0 0 3px rgba(247,198,0,.2)}
+.auth-form>input::placeholder{color:#aaa89f}
+.auth-submit{width:100%;margin-top:18px;border:0;cursor:pointer}
+.auth-switch{text-align:center;font-size:12px;color:var(--muted);margin:24px 0 0}
+.auth-switch a{color:var(--ink);font-weight:800;text-decoration:underline;text-underline-offset:3px}
+.auth-notice{text-align:center;font-size:10px;line-height:1.7;color:#88867d;margin:20px 0 0}
+.signup-card{width:min(100%,500px)}
+.gender-fieldset{padding:0;border:0;margin:12px 0 0}
+.gender-fieldset legend{padding:0}
+.gender-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:13px}
+.gender-option{position:relative;cursor:pointer}
+.gender-option input{position:absolute;opacity:0;inset:0}
+.gender-option span{min-height:44px;padding:0 8px;display:grid;place-items:center;border:1px solid #dcd9cf;border-radius:2px;font-size:11px;transition:border-color .2s,background .2s,color .2s}
+.gender-option input:checked+span{border-color:var(--ink);background:var(--ink);color:#fff}
+.gender-option input:focus-visible+span{outline:3px solid rgba(247,198,0,.55);outline-offset:2px}
+.auth-footer{min-height:245px}
+@media(max-width:680px){.auth-main{min-height:calc(100vh - 300px);padding:38px 16px 58px}.auth-card{padding:30px 23px}.auth-nav{gap:6px}.gender-options{gap:6px}}

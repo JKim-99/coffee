@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="index,follow">
+  <meta name="description" content="컴포즈커피 비공식 페이지 로그인 화면입니다.">
+  <meta property="og:title" content="로그인 | 컴포즈커피 비공식 안내">
+  <meta name="theme-color" content="#f7c600">
+  <title>로그인 | 컴포즈커피 비공식 안내</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="auth.css">
+</head>
+<body class="auth-page">
+  <a class="skip-link" href="#main">본문 바로가기</a>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="홈으로"><span class="brand-mark" aria-hidden="true">C</span><span class="brand-word">COMPOSE<span>COFFEE</span></span></a>
+    <nav class="auth-nav" aria-label="계정 메뉴"><a href="signup.html">회원가입</a></nav>
+  </header>
+
+  <main id="main" class="auth-main">
+    <section class="auth-card" aria-labelledby="login-title">
+      <p class="eyebrow">WELCOME BACK</p>
+      <h1 id="login-title">로그인</h1>
+      <p class="auth-description">계정 정보를 입력해 주세요.</p>
+      <form class="auth-form" action="#" method="get">
+        <label for="login-email">이메일 주소</label>
+        <input id="login-email" name="email" type="email" autocomplete="email" required placeholder="name@example.com">
+
+        <label for="login-password">비밀번호</label>
+        <input id="login-password" name="password" type="password" autocomplete="current-password" required placeholder="비밀번호 입력">
+
+        <button class="button button-dark auth-submit" type="submit">로그인 <span aria-hidden="true">→</span></button>
+      </form>
+      <p class="auth-switch">아직 계정이 없으신가요? <a href="signup.html">회원가입</a></p>
+      <p class="auth-notice">화면 디자인 시안입니다. 실제 로그인 기능은 연결되어 있지 않습니다.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer auth-footer">
+    <a class="brand brand-footer" href="index.html"><span class="brand-mark" aria-hidden="true">C</span><span class="brand-word">COMPOSE<span>COFFEE</span></span></a>
+    <div class="footer-links"><a href="index.html">홈</a><a href="contact.html">문의하기</a></div>
+    <small>본 사이트는 컴포즈커피 공식 페이지가 아닙니다.</small>
+  </footer>
+</body>
+</html>

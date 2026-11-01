@@ -56,7 +56,7 @@ npm install --save-dev wrangler
 npx wrangler d1 create compose-coffee-inquiries
 ```
 
-위 명령은 Cloudflare 로그인/API 토큰이 있어야 합니다. 출력된 `database_id`를 `wrangler.toml`에 넣고, Cloudflare Pages 프로젝트 설정의 **Settings → Functions → D1 database bindings**에서 변수명을 `DB`로 지정해 같은 데이터베이스를 연결하세요. Preview 및 Production 환경 각각에 바인딩을 구성해야 합니다. 이후 Cloudflare Zero Trust Access에서 `your-pages-domain/api/inquiries` 경로에 관리자 전용 self-hosted application 및 허용 정책을 적용하세요. Access 정책이 없는 상태에서는 GET 목록/DELETE가 401을 반환하도록 설계했습니다. 로컬 Pages 개발 서버에서는 `cf-access-authenticated-user-email` 헤더로 관리자 인증을 모의할 수 있습니다. 로컬 D1 테이블을 만든 뒤 개발 서버를 실행합니다.
+위 명령은 Cloudflare 로그인/API 토큰이 있어야 합니다. 출력된 `database_id`를 `wrangler.toml`의 placeholder와 교체하고, Cloudflare Pages 프로젝트 설정의 **Settings → Functions → D1 database bindings**에서 변수명을 `DB`로 지정해 같은 데이터베이스를 연결하세요. Preview 및 Production 환경 각각에 바인딩을 구성해야 합니다. 이후 Cloudflare Zero Trust Access에서 `your-pages-domain/api/inquiries` 경로에 관리자 전용 self-hosted application 및 허용 정책을 적용하세요. Access 정책이 없는 상태에서는 GET 목록/DELETE가 401을 반환하도록 설계했습니다. 로컬 Pages 개발 서버에서는 `cf-access-authenticated-user-email` 헤더로 관리자 인증을 모의할 수 있습니다. 로컬 D1 테이블을 만든 뒤 개발 서버를 실행합니다.
 
 ```sh
 npx wrangler d1 migrations apply compose-coffee-inquiries --local
@@ -81,7 +81,8 @@ npx wrangler d1 migrations apply compose-coffee-inquiries --remote
 | `contact.js` | 문의 폼 및 D1 API 연결, 내역 조회·삭제, 모바일 메뉴 동작 |
 | `functions/api/inquiries.js` | 문의 데이터 저장·조회·삭제 Pages Function API |
 | `migrations/0001_create_inquiries.sql` | 문의 내역 테이블 생성 마이그레이션 |
-| `migrations/0002_add_update_and_delete_timestamps.sql` | 수정·삭제 시각 컬럼 추가 마이그레이션 |
+| `migrations/0002_add_update_and_delete_timestamps.sql` | 문의 수정·삭제 시각 컬럼 추가 마이그레이션 |
+| `migrations/0003_create_users.sql` | 회원가입 데이터 저장용 유저 테이블 마이그레이션 |
 | `wrangler.toml` | Cloudflare Pages 설정 및 D1 바인딩 |
 | `styles.css` | 색상, 레이아웃, 반응형 및 애니메이션 스타일 |
 | `app.js` | 랜덤 메뉴·사진, 필터, 검색, 상세 페이지 동작 |

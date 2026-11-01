@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="index,follow">
+  <meta name="description" content="컴포즈커피 비공식 페이지 회원가입 화면입니다.">
+  <meta property="og:title" content="회원가입 | 컴포즈커피 비공식 안내">
+  <meta name="theme-color" content="#f7c600">
+  <title>회원가입 | 컴포즈커피 비공식 안내</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="auth.css">
+</head>
+<body class="auth-page">
+  <a class="skip-link" href="#main">본문 바로가기</a>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="홈으로"><span class="brand-mark" aria-hidden="true">C</span><span class="brand-word">COMPOSE<span>COFFEE</span></span></a>
+    <nav class="auth-nav" aria-label="계정 메뉴"><a href="login.html">로그인</a></nav>
+  </header>
+
+  <main id="main" class="auth-main">
+    <section class="auth-card signup-card" aria-labelledby="signup-title">
+      <p class="eyebrow">JOIN COMPOSE</p>
+      <h1 id="signup-title">회원가입</h1>
+      <p class="auth-description">아래 정보를 입력해 주세요.</p>
+      <form class="auth-form" action="#" method="get">
+        <label for="signup-nickname">닉네임</label>
+        <input id="signup-nickname" name="nickname" type="text" autocomplete="nickname" required minlength="2" maxlength="30" placeholder="사용할 닉네임">
+
+        <label for="signup-email">이메일 주소</label>
+        <input id="signup-email" name="email" type="email" autocomplete="email" required maxlength="254" placeholder="name@example.com">
+
+        <label for="signup-password">비밀번호</label>
+        <input id="signup-password" name="password" type="password" autocomplete="new-password" required minlength="8" maxlength="128" placeholder="8자 이상 입력해 주세요">
+
+        <fieldset class="gender-fieldset">
+          <legend>성별</legend>
+          <div class="gender-options">
+            <label class="gender-option"><input type="radio" name="gender" value="female" required><span>여성</span></label>
+            <label class="gender-option"><input type="radio" name="gender" value="male"><span>남성</span></label>
+            <label class="gender-option"><input type="radio" name="gender" value="undisclosed"><span>응답 안 함</span></label>
+          </div>
+        </fieldset>
+
+        <button class="button button-dark auth-submit" type="submit">가입하기 <span aria-hidden="true">→</span></button>
+      </form>
+      <p class="auth-switch">이미 계정이 있으신가요? <a href="login.html">로그인</a></p>
+      <p class="auth-notice">화면 디자인 시안입니다. 입력 정보는 저장되거나 전송되지 않습니다.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer auth-footer">
+    <a class="brand brand-footer" href="index.html"><span class="brand-mark" aria-hidden="true">C</span><span class="brand-word">COMPOSE<span>COFFEE</span></span></a>
+    <div class="footer-links"><a href="index.html">홈</a><a href="contact.html">문의하기</a></div>
+    <small>본 사이트는 컴포즈커피 공식 페이지가 아닙니다.</small>
+  </footer>
+</body>
+</html>
