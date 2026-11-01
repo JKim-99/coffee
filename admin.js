@@ -132,12 +132,17 @@
       selectedInquiry.reply = document.getElementById('reply-text').value.trim();
       selectedInquiry.replied_at = result.replied_at;
       selectedInquiry.email_status = result.email_status;
-      replyStatus.textContent = result.email_status === 'sent'
-        ? '답변을 저장했고 문의자에게 알림 이메일을 발송했습니다.'
-        : result.email_status === 'failed'
-          ? '답변은 저장했지만 알림 이메일 발송에 실패했습니다.'
-          : '답변은 저장했습니다. 이메일 발신 도메인 설정이 없어 알림은 발송되지 않았습니다.';
+      replyStatus.textContent = '답변 작성이 완료되었습니다.';
+      if (result.email_status !== 'sent') {
+        replyStatus.textContent += ' (이메일 발송 설정/오류로 알림 메일은 전송되지 않았습니다.)';
+      }
       await loadInquiries();
+      selectedInquiry = null;
+      replyPanel.hidden = true;
+      replyForm.reset();
+      window.alert(result.email_status === 'sent'
+        ? '답변 작성이 완료되었고 알림 이메일을 발송했습니다. 다른 문의를 확인할 수 있습니다.'
+        : '답변 작성이 완료되었습니다. 이메일 발송이 설정되지 않아 알림 메일은 보내지 못했습니다. 다른 문의를 확인할 수 있습니다.');
     } catch (error) {
       if (error.status === 401) showLogin('관리자 세션이 만료되었습니다. 다시 로그인해 주세요.');
       else replyStatus.textContent = error.message;

@@ -35,7 +35,7 @@ export async function onRequestGet({ request, env }) {
   const id = url.searchParams.get('id');
   if (id) {
     const inquiry = await env.DB.prepare(
-      `SELECT id, topic, subject, message, created_at, updated_at
+      `SELECT id, topic, subject, message, reply, replied_at, created_at, updated_at
        FROM inquiries WHERE id = ? AND email = ? COLLATE NOCASE AND deleted_at IS NULL`
     ).bind(id, user.email).first();
     if (!inquiry) return json({ error: '문의 내역을 찾을 수 없습니다.' }, 404);
@@ -43,7 +43,7 @@ export async function onRequestGet({ request, env }) {
   }
 
   const { results } = await env.DB.prepare(
-    `SELECT id, topic, subject, created_at, updated_at
+    `SELECT id, topic, subject, replied_at, created_at, updated_at
      FROM inquiries WHERE email = ? COLLATE NOCASE AND deleted_at IS NULL
      ORDER BY created_at DESC, rowid DESC LIMIT 100`
   ).bind(user.email).all();

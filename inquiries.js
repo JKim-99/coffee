@@ -24,6 +24,7 @@
       empty.hidden = inquiries.length > 0;
       list.innerHTML = inquiries.map((item) => `
         <article class="my-inquiry-card">
+          <span class="inquiry-status-badge${item.replied_at ? ' is-replied' : ''}">${item.replied_at ? '답변 완료' : '답변 대기중'}</span>
           <span class="inquiry-topic">${escapeHtml(item.topic)}</span>
           <a class="my-inquiry-title" href="inquiry-detail.html?id=${encodeURIComponent(item.id)}">${escapeHtml(item.subject || `${item.topic} 문의`)}</a>
           <time>${escapeHtml(new Date(item.created_at).toLocaleString('ko-KR'))}</time>

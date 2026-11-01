@@ -60,10 +60,15 @@ export async function onRequestPost({ request, env }) {
   if (!inquiry) return json({ error: '문의 내역을 찾을 수 없습니다.' }, 404);
 
   const repliedAt = new Date().toISOString();
-  const { status: emailStatus, error: emailError } = await sendReplyNotification(env, inquiry.email, request.url);
-
   await env.DB.prepare(
-    'UPDATE inquiries SET reply = ?, replied_at = ?, updated_at = ?, email_status = ?, email_error = ? WHERE id = ?'
-  ).bind(reply, repliedAt, repliedAt, emailStatus, emailError, id).run();
+    `UPDATE inquiries SET reply = ?, replied_at = ?, updated_at = ?,
+                          email_status = 'pending', email_error = NULL
+     WHERE id = ?`
+  ).bind(reply, repliedAt, repliedAt, id).run();
+
+  // Email is best effort: persist the reply first so email trouble cannot block completion.
+  const { status: emailStatus, error: emailError } = await sendReplyNotification(env, inquiry.email, request.url);
+  await env.DB.prepare('UPDATE inquiries SET email_status = ?, email_error = ? WHERE id = ?')
+    .bind(emailStatus, emailError, id).run();
   return json({ success: true, replied_at: repliedAt, email_status: emailStatus });
 }

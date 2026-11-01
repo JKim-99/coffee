@@ -30,6 +30,16 @@
     document.getElementById('detail-topic').textContent = item.topic;
     document.getElementById('detail-subject').textContent = item.subject;
     document.getElementById('detail-message').textContent = item.message;
+    const replyStatus = document.getElementById('detail-reply-status');
+    const replyContent = document.getElementById('detail-reply-content');
+    replyStatus.textContent = item.reply ? '답변 완료' : '답변 대기중';
+    replyStatus.classList.toggle('is-replied', Boolean(item.reply));
+    if (item.reply) {
+      replyContent.textContent = item.reply;
+      replyContent.hidden = false;
+    } else {
+      replyContent.hidden = true;
+    }
     document.getElementById('detail-created').textContent = `작성 ${new Date(item.created_at).toLocaleString('ko-KR')}`;
     document.getElementById('detail-updated').textContent = item.updated_at && item.updated_at !== item.created_at
       ? `수정 ${new Date(item.updated_at).toLocaleString('ko-KR')}`
