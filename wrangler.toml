@@ -5,7 +5,7 @@ compatibility_date = "2026-10-30"
 [[d1_databases]]
 binding = "DB"
 database_name = "compose-coffee-inquiries"
-database_id = "REPLACE_WITH_CLOUDFLARE_D1_DATABASE_ID"
+database_id = "7218421b-08f9-4a04-b7bf-4ff3a1078a2a"
 migrations_dir = "migrations"
 
 [dev]
