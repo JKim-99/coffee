@@ -14,6 +14,7 @@
   const displayName = (value) => decodeHtmlEntities(value)
     .replace(/^\s*[IH]-\s*/i, '')
     .trim();
+  let favoriteMenuIds = new Set((window.COMPOSE_FAVORITE_IDS || []).map(String));
 
   document.querySelectorAll('.nav-toggle').forEach((button) => {
     button.addEventListener('click', () => {
@@ -53,7 +54,7 @@
   function cardMarkup(item, index) {
     const detailUrl = `menu-detail.html?id=${encodeURIComponent(item.id)}`;
     const name = displayName(item.name);
-    const isFavorite = Boolean(window.COMPOSE_FAVORITE_IDS?.has(String(item.id)));
+    const isFavorite = favoriteMenuIds.has(String(item.id));
     return `<article class="menu-card" data-menu-id="${escapeHtml(item.id)}" style="--card-index:${index};animation-delay:${index * 180}ms">
       <div class="menu-card-image"><a class="menu-card-image-link" href="${detailUrl}" aria-label="${escapeHtml(name)} 메뉴 상세 보기"><img src="${escapeHtml(item.image)}" alt="${escapeHtml(name)}" loading="lazy"><span class="card-arrow" aria-hidden="true">↗</span></a><button class="favorite-toggle${isFavorite ? ' is-favorite' : ''}" type="button" data-favorite-id="${escapeHtml(item.id)}" aria-pressed="${isFavorite}" aria-label="${escapeHtml(name)} 선호 메뉴 ${isFavorite ? '해제' : '등록'}">${isFavorite ? '♥' : '♡'}</button></div>
       <a class="menu-card-copy" href="${detailUrl}"><small>${escapeHtml(item.category)}</small><h3>${escapeHtml(name)}</h3></a>
@@ -90,7 +91,7 @@
     const count = document.getElementById('result-count');
     const empty = document.getElementById('empty-state');
     let selectedCategory = '전체';
-      let favoriteMenuIds = new Set((window.COMPOSE_FAVORITE_IDS || []).map(String));
+    favoriteMenuIds = new Set((window.COMPOSE_FAVORITE_IDS || []).map(String));
 
     tabs.innerHTML = ['전체', '내 선호 메뉴', ...categories].map((category, index) =>
       `<button class="category-tab" type="button" data-category="${escapeHtml(category)}" aria-pressed="${index === 0}">${escapeHtml(category)}</button>`
