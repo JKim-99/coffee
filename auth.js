@@ -4,6 +4,26 @@
   const status = document.getElementById('auth-status');
   const signupForm = document.getElementById('signup-form');
   const loginForm = document.getElementById('login-form');
+  const rememberedEmailKey = 'composecoffee.remembered-email.v1';
+
+  if (loginForm) {
+    const emailInput = loginForm.querySelector('[name="email"]');
+    const rememberEmail = loginForm.querySelector('[name="rememberEmail"]');
+    try {
+      const rememberedEmail = window.localStorage.getItem(rememberedEmailKey);
+      if (rememberedEmail) {
+        emailInput.value = rememberedEmail;
+        rememberEmail.checked = true;
+      }
+    } catch (error) {
+      // Remember-email is optional when browser storage is unavailable.
+    }
+
+    rememberEmail?.addEventListener('change', () => {
+      if (rememberEmail.checked) return;
+      try { window.localStorage.removeItem(rememberedEmailKey); } catch (error) {}
+    });
+  }
 
   async function send(url, method, payload) {
     const response = await fetch(url, {
@@ -68,6 +88,15 @@
           email: String(fields.get('email')).trim(),
           password: String(fields.get('password'))
         });
+        try {
+          if (loginForm.querySelector('[name="rememberEmail"]').checked) {
+            window.localStorage.setItem(rememberedEmailKey, user.email);
+          } else {
+            window.localStorage.removeItem(rememberedEmailKey);
+          }
+        } catch (error) {
+          // Storage restrictions must not prevent successful authentication.
+        }
         status.textContent = `${user.nickname}님, 로그인되었습니다.`;
         if (accountLink) accountLink.hidden = false;
         if (logoutButton) logoutButton.hidden = false;

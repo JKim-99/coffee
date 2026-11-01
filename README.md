@@ -51,7 +51,7 @@
 
 ## 로컬에서 확인
 
-Cloudflare Pages Functions 및 D1을 포함해 실행하려면 Node.js와 Wrangler가 필요합니다. 회원가입·로그인은 `/api/auth/signup`, `/api/auth/login`, `/api/auth/me`에서 처리합니다. 비밀번호는 scrypt로 해시하고 HttpOnly 세션 쿠키를 사용합니다. 문의 API `/api/inquiries`는 POST(저장)를 공개하고, GET(목록), PUT(수정), DELETE(소프트 삭제)는 Cloudflare Access 보호를 전제로 합니다. 공개 문의 화면은 관리자 목록을 숨기며 Access가 승인한 요청에만 목록을 표시합니다. 문의 내역과 계정은 같은 D1에 저장합니다.
+Cloudflare Pages Functions 및 D1을 포함해 실행하려면 Node.js와 Wrangler가 필요합니다. 회원가입·로그인은 `/api/auth/signup`, `/api/auth/login`, `/api/auth/me`에서 처리합니다. 비밀번호는 scrypt 해시만 D1에 저장하고 HttpOnly 세션 쿠키를 사용합니다. 로그인 화면의 이메일 저장 선택은 성공한 이메일만 브라우저 `localStorage`에 저장하며 비밀번호는 저장하지 않습니다. 문의 API `/api/inquiries`는 POST(저장)를 공개하고, GET(목록), PUT(수정), DELETE(소프트 삭제)는 Cloudflare Access 보호를 전제로 합니다. 공개 문의 화면은 관리자 목록을 숨기며 Access가 승인한 요청에만 목록을 표시합니다. 문의 내역과 계정은 같은 D1에 저장합니다.
 
 독립 API Worker는 `wrangler.worker.toml`로 배포하며, Pages Functions와 같은 D1 데이터베이스를 `DB` binding으로 사용합니다. Worker의 `/health`는 DB 연결과 테이블별 행 수를 반환합니다.
 
