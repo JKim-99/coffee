@@ -90,7 +90,7 @@
     const count = document.getElementById('result-count');
     const empty = document.getElementById('empty-state');
     let selectedCategory = '전체';
-      let favoriteMenuIds = new Set();
+      let favoriteMenuIds = new Set((window.COMPOSE_FAVORITE_IDS || []).map(String));
 
     tabs.innerHTML = ['전체', '내 선호 메뉴', ...categories].map((category, index) =>
       `<button class="category-tab" type="button" data-category="${escapeHtml(category)}" aria-pressed="${index === 0}">${escapeHtml(category)}</button>`
@@ -111,6 +111,7 @@
 
     window.setFavoriteMenuIds = (ids) => {
       favoriteMenuIds = new Set(ids.map(String));
+      window.COMPOSE_FAVORITE_IDS = [...favoriteMenuIds];
       renderMenu();
       menuGrid.querySelectorAll('[data-favorite-id]').forEach((button) => {
         const isFavorite = favoriteMenuIds.has(button.dataset.favoriteId);

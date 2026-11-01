@@ -4,7 +4,7 @@
   const menuGrid = document.getElementById('menu-grid');
   if (!menuGrid) return;
 
-  let favoriteMenuIds = new Set();
+  let favoriteMenuIds = new Set((window.COMPOSE_FAVORITE_IDS || []).map(String));
   let loggedIn = false;
 
   fetch('/api/my/favorites', { credentials: 'same-origin', headers: { accept: 'application/json' } })
@@ -17,6 +17,7 @@
       if (!data) return;
       loggedIn = true;
       favoriteMenuIds = new Set(data.favorites.map((item) => String(item.menu_id)));
+      window.COMPOSE_FAVORITE_IDS = [...favoriteMenuIds];
       window.setFavoriteMenuIds?.([...favoriteMenuIds]);
     })
     .catch(() => {});
@@ -54,6 +55,7 @@
       if (!response.ok) throw new Error(data.error || '선호 메뉴를 저장하지 못했습니다.');
       if (data.isFavorite) favoriteMenuIds.add(menuId);
       else favoriteMenuIds.delete(menuId);
+      window.COMPOSE_FAVORITE_IDS = [...favoriteMenuIds];
       window.setFavoriteMenuIds?.([...favoriteMenuIds]);
     } catch (error) {
       window.alert(error.message || '선호 메뉴를 변경하지 못했습니다.');
