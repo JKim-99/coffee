@@ -112,6 +112,14 @@
     window.setFavoriteMenuIds = (ids) => {
       favoriteMenuIds = new Set(ids.map(String));
       renderMenu();
+      menuGrid.querySelectorAll('[data-favorite-id]').forEach((button) => {
+        const isFavorite = favoriteMenuIds.has(button.dataset.favoriteId);
+        button.classList.toggle('is-favorite', isFavorite);
+        button.setAttribute('aria-pressed', String(isFavorite));
+        const item = menu.find((menuItem) => String(menuItem.id) === button.dataset.favoriteId);
+        button.setAttribute('aria-label', `${displayName(item?.name)} 선호 메뉴 ${isFavorite ? '해제' : '등록'}`);
+        button.textContent = isFavorite ? '♥' : '♡';
+      });
     };
 
     tabs.addEventListener('click', (event) => {
