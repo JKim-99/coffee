@@ -1,0 +1,21 @@
+.contact-banner{min-height:250px}
+.contact-content{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(40px,8vw,120px);padding-top:88px;padding-bottom:110px}
+.contact-intro{align-self:start;position:sticky;top:40px}
+.contact-intro .eyebrow{margin-bottom:14px}
+.contact-intro h2{font-size:clamp(30px,4vw,46px);letter-spacing:-.07em;line-height:1.15;margin:0 0 18px}
+.contact-intro>p:not(.eyebrow){font-size:13px;line-height:1.9;color:var(--muted);margin:0}
+.contact-phone{display:flex;flex-direction:column;gap:7px;margin-top:34px;padding:20px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.contact-phone span{font-size:11px;color:var(--muted)}
+.contact-phone strong{font-size:25px;letter-spacing:.02em}
+.contact-form{display:grid;grid-template-columns:1fr;gap:10px}
+.contact-form label{font-size:12px;font-weight:700;margin-top:13px}
+.contact-form label span{color:#a14124}
+.contact-form input,.contact-form select,.contact-form textarea{width:100%;border:1px solid #dcd9cf;border-radius:2px;background:#fff;padding:13px 14px;color:var(--ink);font:inherit;font-size:13px;outline:0;transition:border-color .2s,box-shadow .2s}
+.contact-form input,.contact-form select{min-height:48px}
+.contact-form textarea{min-height:170px;resize:vertical;line-height:1.7}
+.contact-form input:focus,.contact-form select:focus,.contact-form textarea:focus{border-color:var(--ink);box-shadow:0 0 0 3px rgba(247,198,0,.2)}
+.contact-form input::placeholder,.contact-form textarea::placeholder{color:#aaa89f}
+.form-note,.form-status{font-size:10px;line-height:1.7;color:var(--muted);margin:0}
+.contact-form .button{justify-self:start;margin-top:10px;border:0;cursor:pointer}
+.form-status:empty{display:none}
+@media(max-width:680px){.contact-content{grid-template-columns:1fr;gap:38px;padding-top:58px;padding-bottom:76px}.contact-intro{position:static}.contact-intro h2{font-size:34px}.contact-phone{margin-top:23px}.contact-form .button{width:100%}}

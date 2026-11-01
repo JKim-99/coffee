@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="index,follow">
+  <meta name="description" content="컴포즈커피 고객상담 및 문의 방법을 확인하고 문의 내용을 작성해 보세요.">
+  <meta property="og:title" content="문의하기 | 컴포즈커피">
+  <meta name="theme-color" content="#f7c600">
+  <title>문의하기 | 컴포즈커피</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="contact.css">
+  <script src="contact.js" defer></script>
+</head>
+<body class="contact-page">
+  <a class="skip-link" href="#main">본문 바로가기</a>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="컴포즈커피 홈"><span class="brand-mark" aria-hidden="true">C</span><span class="brand-word">COMPOSE<span>COFFEE</span></span></a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="메뉴 열기"><span></span><span></span><span></span></button>
+    <nav class="primary-nav" id="primary-nav" aria-label="주 메뉴">
+      <a class="nav-link" href="index.html">홈</a>
+      <a class="nav-link" href="menu.html">메뉴</a>
+      <a class="nav-link is-current" href="contact.html" aria-current="page">문의하기</a>
+      <a class="nav-cta" href="tel:18995685">창업 문의 <span>1899-5685</span></a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="page-banner contact-banner" aria-labelledby="contact-title">
+      <div class="page-banner-inner">
+        <p class="eyebrow">WE'RE HERE TO HELP</p>
+        <h1 id="contact-title"><em>문의하기</em></h1>
+        <p>컴포즈커피에 궁금한 점을 남겨주세요.</p>
+      </div>
+      <span class="banner-symbol" aria-hidden="true">?</span>
+    </section>
+
+    <section class="contact-content section-wrap" aria-labelledby="contact-form-title">
+      <div class="contact-intro">
+        <p class="eyebrow">CONTACT COMPOSE</p>
+        <h2 id="contact-form-title">무엇을 도와드릴까요?</h2>
+        <p>고객상담 전화로 문의하시거나, 아래 양식을 작성해 메일 앱에서 문의를 보내실 수 있습니다.</p>
+        <a class="contact-phone" href="tel:18995003"><span>고객상담 전화</span><strong>1899-5003</strong></a>
+      </div>
+
+      <form class="contact-form" id="contact-form" action="mailto:help@composecoffee.com" method="post" enctype="text/plain">
+        <label for="contact-name">이름 <span aria-hidden="true">*</span></label>
+        <input id="contact-name" name="name" type="text" autocomplete="name" required maxlength="60" placeholder="이름을 입력해 주세요">
+
+        <label for="contact-email">이메일 <span aria-hidden="true">*</span></label>
+        <input id="contact-email" name="email" type="email" autocomplete="email" required maxlength="254" placeholder="답변받을 이메일 주소를 입력해 주세요">
+
+        <label for="contact-topic">문의 유형</label>
+        <select id="contact-topic" name="topic">
+          <option value="일반 문의">일반 문의</option>
+          <option value="메뉴 문의">메뉴 문의</option>
+          <option value="매장 이용 문의">매장 이용 문의</option>
+          <option value="제휴 문의">제휴 문의</option>
+          <option value="기타">기타</option>
+        </select>
+
+        <label for="contact-message">문의 내용 <span aria-hidden="true">*</span></label>
+        <textarea id="contact-message" name="message" rows="7" required maxlength="3000" placeholder="문의하실 내용을 입력해 주세요."></textarea>
+        <p class="form-note">이 페이지는 정적 웹페이지라 문의 내용이 서버로 전송되지 않습니다. 제출하면 기기의 기본 메일 앱이 열립니다.</p>
+        <button class="button button-dark" type="submit">메일로 문의 보내기 <span aria-hidden="true">↗</span></button>
+        <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <a class="brand brand-footer" href="index.html"><span class="brand-mark" aria-hidden="true">C</span><span class="brand-word">COMPOSE<span>COFFEE</span></span></a>
+    <div class="footer-links"><a href="contact.html" aria-current="page">문의하기</a><a href="https://composecoffee.com/custumer" target="_blank" rel="noopener">고객의 소리</a></div>
+    <p>고객상담 <a href="tel:18995003">1899-5003</a> <span>·</span> 창업문의 <a href="tel:18995685">1899-5685</a></p>
+    <small>문의 내용은 메일 앱을 통해 전송됩니다. 공식 상담 채널은 <a href="https://composecoffee.com/custumer" target="_blank" rel="noopener">컴포즈커피 고객의 소리</a>를 이용해 주세요.</small>
+  </footer>
+</body>
+</html>
