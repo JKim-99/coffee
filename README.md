@@ -80,6 +80,8 @@ npx wrangler d1 migrations apply compose-coffee-inquiries --remote
 | `menu.html` | 메뉴 목록, 검색, 카테고리 필터 |
 | `menu-detail.html` | 선택한 메뉴의 사진과 영양 상세 |
 | `contact.html` | 고객 문의 및 상담 안내 |
+| `account.html` | 로그인 세션으로 확인하는 회원 정보 페이지 |
+| `account.js` | 인증된 회원 정보 조회 및 로그아웃 |
 | `contact.css` | 문의하기 페이지의 폼 레이아웃과 반응형 스타일 |
 | `contact.js` | 문의 폼 및 D1 API 연결, 내역 조회·삭제, 모바일 메뉴 동작 |
 | `functions/api/inquiries.js` | 문의 데이터 저장·조회·삭제 Pages Function API |

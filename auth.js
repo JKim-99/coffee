@@ -45,12 +45,14 @@
 
   if (loginForm && status) {
     const logoutButton = document.getElementById('logout-button');
+    const accountLink = document.getElementById('account-link');
     if (new URLSearchParams(location.search).has('registered')) status.textContent = '회원가입이 완료되었습니다. 로그인해 주세요.';
     fetch('/api/auth/me', { credentials: 'same-origin', headers: { accept: 'application/json' } })
       .then((response) => response.ok ? response.json() : null)
       .then((data) => {
         if (!data?.user) return;
         status.textContent = `${data.user.nickname}님 로그인 상태입니다.`;
+        if (accountLink) accountLink.hidden = false;
         if (logoutButton) logoutButton.hidden = false;
       })
       .catch(() => {});
@@ -67,6 +69,7 @@
           password: String(fields.get('password'))
         });
         status.textContent = `${user.nickname}님, 로그인되었습니다.`;
+        if (accountLink) accountLink.hidden = false;
         if (logoutButton) logoutButton.hidden = false;
         window.setTimeout(() => { window.location.href = 'index.html'; }, 600);
       } catch (error) {
@@ -80,6 +83,7 @@
         await send('/api/auth/me', 'DELETE');
         status.textContent = '로그아웃되었습니다.';
         logoutButton.hidden = true;
+        if (accountLink) accountLink.hidden = true;
       } catch (error) {
         status.textContent = error.message;
       }

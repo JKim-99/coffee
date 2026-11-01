@@ -18,7 +18,7 @@ export async function onRequestGet({ request, env }) {
   const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(sessionToken));
   const sessionId = base64Url(new Uint8Array(hash));
   const user = await env.DB.prepare(
-    `SELECT id, nickname, email, gender FROM users
+    `SELECT id, nickname, email, gender, created_at FROM users
      WHERE session_token_hash = ? AND session_expires_at > ? AND deleted_at IS NULL`
   ).bind(sessionId, new Date().toISOString()).first();
   if (!user) {
