@@ -50,7 +50,7 @@
 
 ## 로컬에서 확인
 
-Cloudflare Pages Functions 및 D1을 포함해 실행하려면 Node.js와 Wrangler가 필요합니다. 문의 API는 `/api/inquiries`에서 POST(저장)를 제공하고, GET(목록), PUT(수정) 및 DELETE(소프트 삭제)는 Cloudflare Access로 인증된 관리자만 사용할 수 있습니다. 데이터는 단일 `inquiries` 테이블에 저장하며 `created_at`, `updated_at`, `deleted_at` 시각을 기록합니다.
+Cloudflare Pages Functions 및 D1을 포함해 실행하려면 Node.js와 Wrangler가 필요합니다. 회원가입·로그인은 `/api/auth/signup`, `/api/auth/login`, `/api/auth/me`에서 처리합니다. 비밀번호는 PBKDF2-SHA256으로 해시하고 HttpOnly 세션 쿠키를 사용합니다. 문의 API `/api/inquiries`는 POST(저장)를 공개하고, GET(목록), PUT(수정), DELETE(소프트 삭제)는 Cloudflare Access 보호를 전제로 합니다. 공개 문의 화면은 관리자 목록을 숨기며 Access가 승인한 요청에만 목록을 표시합니다. 문의 내역과 계정은 같은 D1에 저장합니다.
 
 독립 API Worker는 `wrangler.worker.toml`로 배포하며, Pages Functions와 같은 D1 데이터베이스를 `DB` binding으로 사용합니다. Worker의 `/health`는 DB 연결과 테이블별 행 수를 반환합니다.
 
@@ -83,10 +83,13 @@ npx wrangler d1 migrations apply compose-coffee-inquiries --remote
 | `contact.css` | 문의하기 페이지의 폼 레이아웃과 반응형 스타일 |
 | `contact.js` | 문의 폼 및 D1 API 연결, 내역 조회·삭제, 모바일 메뉴 동작 |
 | `functions/api/inquiries.js` | 문의 데이터 저장·조회·삭제 Pages Function API |
+| `functions/api/auth/` | D1 기반 회원가입, 로그인, 세션 확인·로그아웃 Pages Function API |
+| `auth.js` | 회원가입·로그인 폼을 API에 연결하는 브라우저 코드 |
 | `workers/api.js` | D1 연결 상태 확인용 독립 Cloudflare Worker |
 | `migrations/0001_create_inquiries.sql` | 문의 내역 테이블 생성 마이그레이션 |
 | `migrations/0002_add_update_and_delete_timestamps.sql` | 문의 수정·삭제 시각 컬럼 추가 마이그레이션 |
 | `migrations/0003_create_users.sql` | 회원가입 데이터 저장용 유저 테이블 마이그레이션 |
+| `migrations/0004_add_user_session_fields.sql` | 사용자 세션 해시 및 만료 시각 컬럼 마이그레이션 |
 | `wrangler.toml` | Cloudflare Pages 설정 및 D1 바인딩 |
 | `wrangler.worker.toml` | 독립 Worker와 동일 D1 바인딩 설정 |
 | `styles.css` | 색상, 레이아웃, 반응형 및 애니메이션 스타일 |

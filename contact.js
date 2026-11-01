@@ -15,7 +15,8 @@
   const inquiryList = document.getElementById('inquiry-list');
   const emptyState = document.getElementById('history-empty');
   const clearButton = document.getElementById('clear-inquiries');
-  if (!form || !status || !inquiryList || !emptyState || !clearButton) return;
+  const inquiryHistory = document.getElementById('inquiry-history');
+  if (!form || !status || !inquiryList || !emptyState || !clearButton || !inquiryHistory) return;
 
   const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (character) => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -54,7 +55,22 @@
     }
   }
 
-  loadInquiries();
+  async function tryAdminHistory() {
+    try {
+      const response = await fetch('/api/inquiries?limit=50', {
+        headers: { accept: 'application/json' },
+        credentials: 'same-origin'
+      });
+      if (response.status === 401 || response.status === 403 || !response.ok) return;
+      const data = await response.json();
+      inquiryHistory.hidden = false;
+      renderInquiries(data.inquiries);
+    } catch (error) {
+      // Public visitors do not need access to the administrator-only inquiry list.
+    }
+  }
+
+  tryAdminHistory();
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -82,8 +98,17 @@
 
       form.reset();
       status.textContent = '문의 내역을 데이터베이스에 저장했습니다.';
-      await loadInquiries();
-      document.getElementById('inquiry-history-title').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      try {
+        const response = await fetch('/api/inquiries?limit=50', { headers: { accept: 'application/json' }, credentials: 'same-origin' });
+        if (response.ok) {
+          const data = await response.json();
+          inquiryHistory.hidden = false;
+          renderInquiries(data.inquiries);
+          document.getElementById('inquiry-history-title').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      } catch (error) {
+        // Submitted inquiries remain stored; administrator history is private.
+      }
     } catch (error) {
       status.textContent = error.message || '문의 내역을 저장하지 못했습니다. 다시 시도해 주세요.';
     } finally {
@@ -104,7 +129,7 @@
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || '문의 내역을 삭제하지 못했습니다.');
       status.textContent = '문의 내역을 삭제했습니다.';
-      await loadInquiries();
+      await tryAdminHistory();
     } catch (error) {
       status.textContent = error.message || '문의 내역을 삭제하지 못했습니다.';
       button.disabled = false;
@@ -121,12 +146,12 @@
       } catch (error) {
         status.textContent = error.message;
         clearButton.disabled = false;
-        await loadInquiries();
+        await tryAdminHistory();
         return;
       }
     }
     status.textContent = '문의 내역을 모두 삭제했습니다.';
     clearButton.disabled = false;
-    await loadInquiries();
+    await tryAdminHistory();
   });
 })();

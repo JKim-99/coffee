@@ -15,6 +15,11 @@
 .auth-switch{text-align:center;font-size:12px;color:var(--muted);margin:24px 0 0}
 .auth-switch a{color:var(--ink);font-weight:800;text-decoration:underline;text-underline-offset:3px}
 .auth-notice{text-align:center;font-size:10px;line-height:1.7;color:#88867d;margin:20px 0 0}
+.auth-status:empty{display:none}
+.auth-status{font-size:12px;line-height:1.7;color:var(--ink);text-align:center;margin:14px 0 0}
+.auth-logout{display:block;margin:12px auto 0;border:1px solid var(--line);background:#fff;padding:9px 15px;font:inherit;font-size:11px;cursor:pointer}
+.auth-logout:hover{border-color:var(--ink)}
+.auth-logout[hidden]{display:none}
 .signup-card{width:min(100%,500px)}
 .gender-fieldset{padding:0;border:0;margin:12px 0 0}
 .gender-fieldset legend{padding:0}

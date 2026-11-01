@@ -38,5 +38,6 @@
 .inquiry-card-message{font-size:12px;line-height:1.8;white-space:normal;overflow-wrap:anywhere;margin:16px 0 20px}
 .inquiry-card-actions{border-top:1px solid var(--line);padding-top:14px}
 .inquiry-delete{padding:7px 11px;font-size:10px}
+.inquiry-history[hidden]{display:none}
 @media(max-width:680px){.contact-content{grid-template-columns:1fr;gap:38px;padding-top:58px;padding-bottom:76px}.contact-intro{position:static}.contact-intro h2{font-size:34px}.contact-phone{margin-top:23px}.contact-form .button{width:100%}}
 @media(max-width:680px){.inquiry-history{padding-bottom:76px}.history-heading{align-items:start}.history-clear{padding:9px;font-size:10px}.inquiry-card{padding:17px}.inquiry-card-heading{align-items:flex-start}.inquiry-card time{text-align:right}}
