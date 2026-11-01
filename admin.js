@@ -11,6 +11,8 @@
   const inquiryList = document.getElementById('admin-inquiry-list');
   const replyPanel = document.getElementById('admin-reply-panel');
   const replyForm = document.getElementById('reply-form');
+  const topicFilter = document.getElementById('admin-topic-filter');
+  const topicOf = (item) => item.topic?.trim() || '기타';
   let selectedInquiry = null;
   let inquiries = [];
 
@@ -48,21 +50,51 @@
     loginStatus.textContent = message;
   }
 
+  function renderInquiries() {
+    const groups = new Map();
+    inquiries.forEach((item) => {
+      const topic = topicOf(item);
+      if (!groups.has(topic)) groups.set(topic, []);
+      groups.get(topic).push(item);
+    });
+    const selectedTopic = topicFilter.value;
+    const topics = [...groups.keys()];
+    topicFilter.innerHTML = '<option value="">전체 카테고리</option>' + topics.map((topic) =>
+      `<option value="${escapeHtml(topic)}">${escapeHtml(topic)} (${groups.get(topic).length})</option>`
+    ).join('');
+    topicFilter.value = groups.has(selectedTopic) ? selectedTopic : '';
+    const visibleGroups = [...groups].filter(([topic]) => !topicFilter.value || topic === topicFilter.value);
+    const count = visibleGroups.reduce((total, [, items]) => total + items.length, 0);
+    listStatus.textContent = inquiries.length ? `${count}건의 문의 · 전체 ${inquiries.length}건` : '등록된 문의가 없습니다.';
+    if (inquiries.some((item) => item.email_status === 'not_configured')) {
+      listStatus.textContent += ' · 이메일 발신 설정이 없어 답변 알림은 전송되지 않습니다.';
+    }
+    inquiryList.innerHTML = visibleGroups.map(([topic, items]) => {
+      const cards = items.map((item) => `
+        <button class="admin-inquiry-item${selectedInquiry?.id === item.id ? ' is-selected' : ''}" type="button" data-inquiry-id="${escapeHtml(item.id)}">
+          <span class="admin-inquiry-item-title">${escapeHtml(item.subject)}</span>
+          <span class="admin-inquiry-item-meta">${escapeHtml(topic)} · ${escapeHtml(item.email)}</span>
+          <span class="admin-inquiry-item-meta">${item.replied_at ? '답변 완료' : '답변 대기'} · ${escapeHtml(new Date(item.created_at).toLocaleString('ko-KR'))}</span>
+        </button>`).join('');
+      return `<section class="admin-inquiry-group" aria-label="${escapeHtml(topic)} 문의 목록">
+        <h2 class="admin-inquiry-group-title">${escapeHtml(topic)} <span>${items.length}건</span></h2>${cards}
+      </section>`;
+    }).join('');
+    if (selectedInquiry && !visibleGroups.some(([, items]) => items.some((item) => item.id === selectedInquiry.id))) {
+      selectedInquiry = null;
+      replyPanel.hidden = true;
+      replyForm.reset();
+    }
+  }
+
+  topicFilter.addEventListener('change', renderInquiries);
+
   async function loadInquiries() {
     listStatus.textContent = '문의 목록을 불러오는 중입니다.';
     try {
       const data = await api('/api/admin/inquiries');
       inquiries = data.inquiries;
-      listStatus.textContent = inquiries.length ? `${inquiries.length}건의 문의` : '등록된 문의가 없습니다.';
-      if (inquiries.some((item) => item.email_status === 'not_configured')) {
-        listStatus.textContent += ' · 이메일 발신 설정이 없어 답변 알림은 전송되지 않습니다.';
-      }
-      inquiryList.innerHTML = inquiries.map((item) => `
-        <button class="admin-inquiry-item${selectedInquiry?.id === item.id ? ' is-selected' : ''}" type="button" data-inquiry-id="${escapeHtml(item.id)}">
-          <span class="admin-inquiry-item-title">${escapeHtml(item.subject)}</span>
-          <span class="admin-inquiry-item-meta">${escapeHtml(item.topic)} · ${escapeHtml(item.email)}</span>
-          <span class="admin-inquiry-item-meta">${item.replied_at ? '답변 완료' : '답변 대기'} · ${escapeHtml(new Date(item.created_at).toLocaleString('ko-KR'))}</span>
-        </button>`).join('');
+      renderInquiries();
       if (selectedInquiry) {
         const selected = inquiries.find((item) => item.id === selectedInquiry.id);
         if (selected) selectInquiry(selected.id);

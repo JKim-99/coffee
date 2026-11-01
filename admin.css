@@ -36,3 +36,10 @@
 .admin-reply-form button{border:0;cursor:pointer;margin-top:8px}
 .admin-footer{min-height:180px}
 @media(max-width:760px){.admin-main{padding-top:45px;padding-bottom:70px}.admin-inquiry-layout{grid-template-columns:1fr}.admin-inquiry-list{max-height:45vh}.admin-heading{align-items:center}.admin-reply-panel{padding:19px}}
+.admin-category-filter{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:18px}
+.admin-category-filter label{font-size:12px;font-weight:700}
+.admin-category-filter select{max-width:100%;padding:10px 14px;border:1px solid var(--line);background:#fff;color:var(--ink);font:inherit;font-size:13px}
+.admin-category-filter select:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+.admin-inquiry-group{display:grid;gap:9px;min-width:0;margin-bottom:14px}
+.admin-inquiry-group-title{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:14px;margin:0;padding:10px 0;border-bottom:2px solid var(--yellow)}
+.admin-inquiry-group-title span{font-size:11px;font-weight:400;color:var(--muted)}

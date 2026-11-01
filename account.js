@@ -5,7 +5,6 @@
   const details = document.getElementById('account-details');
   const actions = document.getElementById('account-actions');
   const loginLink = document.getElementById('account-login-link');
-  const logoutButton = document.getElementById('account-logout');
   const labels = { female: '여성', male: '남성', undisclosed: '응답 안 함' };
 
   async function request(url, method = 'GET') {
@@ -40,15 +39,4 @@
     if (error.status === 401) loginLink.hidden = false;
   });
 
-  logoutButton.addEventListener('click', async () => {
-    logoutButton.disabled = true;
-    try {
-      await request('/api/auth/me', 'DELETE');
-      window.location.replace('login.html');
-    } catch (error) {
-      status.hidden = false;
-      status.textContent = '로그아웃하지 못했습니다. 다시 시도해 주세요.';
-      logoutButton.disabled = false;
-    }
-  });
 })();
