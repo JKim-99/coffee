@@ -1,143 +1,238 @@
-# 컴포즈커피 소개 홈페이지
+# 컴포즈커피 비공식 소개 홈페이지
 
-컴포즈커피의 브랜드와 메뉴를 소개하는 Cloudflare Pages 웹사이트입니다. HTML, CSS, JavaScript와 Pages Functions를 사용하며, 메뉴명·사진·영양 정보는 프로젝트의 `menu.md`를 기준으로 사용합니다. 문의 내역은 Cloudflare D1(SQLite)에 저장합니다.
+컴포즈커피의 브랜드·메뉴·영양 정보를 소개하고, 회원별 선호 메뉴와 문의·답변을 관리하는 웹사이트입니다. HTML, CSS, 바닐라 JavaScript, Cloudflare Pages Functions와 D1을 사용합니다. 컴포즈커피 공식 홈페이지가 아니며, 메뉴 자료의 문서 기준은 [`menu.md`](menu.md)입니다.
 
-## 사이트
+이 문서는 `9fb1a99`까지의 커밋 이력과 현재 소스를 기준으로 정리했습니다. 배포 주소는 프로젝트에 기록된 주소이며, 소스 구현 여부와 실제 운영 환경의 설정·배포 상태는 구분합니다.
 
-- 배포 홈페이지: <https://coffee-4bx.pages.dev/>
-- D1 연결 확인용 Worker: <https://compose-coffee-api.whddnjsqkd123.workers.dev/health>
-- 메뉴 목록: <https://coffee-4bx.pages.dev/menu.html>
-- 문의하기: <https://coffee-4bx.pages.dev/contact.html>
-- 문의 확인하기: <https://coffee-4bx.pages.dev/inquiries.html>
-- 메뉴 상세: 메뉴 카드에서 해당 상세 화면으로 이동합니다.
-- 검색 크롤링 규칙: <https://coffee-4bx.pages.dev/robots.txt>
-- 사이트맵: <https://coffee-4bx.pages.dev/sitemap.xml>
-- GitHub 저장소: <https://github.com/JKim-99/coffee>
+## 바로가기
 
-## 페이지 제목과 디스크립션
-
-각 HTML 페이지는 고유한 `<title>`, 페이지 내용을 설명하는 `description`, 공유 미리보기용 `og:title`, 검색 허용용 `robots=index,follow` 메타 태그를 포함합니다.
-
-| 페이지 | `<title>` | Description 요약 |
-|---|---|---|
-| `index.html` | 컴포즈커피 | 컴포즈커피 소개 및 메뉴 안내 |
-| `menu.html` | 메뉴 / 컴포즈커피 | 메뉴 카테고리와 메뉴 둘러보기 안내 |
-| `menu-detail.html` | 메뉴 상세 / 컴포즈커피 | 선택 메뉴의 사진 및 제품 영양 정보 안내 |
-| `contact.html` | 문의하기 / 컴포즈커피 | 고객상담 전화 및 문의 작성 안내 |
-
-표에서 `/`는 페이지 제목의 구분을 읽기 쉽게 나타낸 것입니다. 페이지 제목이나 본문 헤더를 바꾸면 description과 Open Graph 제목도 함께 검토하세요.
+- 로컬 홈페이지: [http://127.0.0.1:8788/](http://127.0.0.1:8788/) — 개발 서버 실행 필요
+- 배포 홈페이지: [coffee-4bx.pages.dev](https://coffee-4bx.pages.dev/)
+- GitHub: [JKim-99/coffee](https://github.com/JKim-99/coffee)
+- D1 연결 확인 Worker: [health](https://compose-coffee-api.whddnjsqkd123.workers.dev/health)
 
 ## 주요 기능
 
-- 메인 화면에 “공식 페이지가 아닙니다” 안내와 커피 이미지 표시
-- 메뉴 사진 중 서로 다른 두 장을 무작위로 선정해 첫 화면에 배치
-- 전체 메뉴 중 중복 없이 12개를 무작위 선정하고 카드별 순차 애니메이션 적용
-- 페이지 진입 또는 새로고침 시 랜덤 이미지와 추천 메뉴를 새로 선정
-- 메뉴 페이지에서 카테고리 필터와 메뉴 이름 검색 제공
-- 메뉴 카드 선택 시 상세 페이지에서 사진과 `menu.md`의 영양 정보를 표시
-- 문의하기 페이지에서 문의 내역을 Cloudflare D1에 저장하고 확인·삭제할 수 있도록 제공
-- 반응형 레이아웃, 키보드 접근성 및 모션 감소 설정 고려
+### 홈페이지와 메뉴
 
-## 개발 과정
+- 비공식 사이트 안내와 서로 다른 두 장의 무작위 메뉴 사진을 표시합니다.
+- 전체 메뉴에서 중복 없이 최대 12개를 뽑아 ‘오늘의 추천 메뉴’에 순차 표시합니다. 페이지를 다시 열면 새로 선정합니다.
+- 메뉴 목록에서 카테고리, 메뉴 이름 검색, ‘내 선호 메뉴’ 필터를 제공합니다.
+- 메뉴 상세 페이지에서 제품 사진, 영양 정보와 공식 제품 정보 링크를 확인할 수 있습니다.
+- 표시용 메뉴명은 `I-`·`H-` 접두사와 HTML 엔티티를 정리합니다.
+- 반응형 화면, 키보드 포커스, 이미지 대체 텍스트와 모션 감소 설정을 고려했습니다.
 
-1. **프로젝트 문서 준비**: `guide.md`에 공식 컴포즈커피 정보, 화면 구조, 콘텐츠·접근성 원칙을 정리하고 `review.md`에 수정 요청을 기록했습니다.
-2. **메뉴 자료 수집**: 공식 메뉴 페이지에서 9개 카테고리의 메뉴명, 사진, 상세 링크, 영양 정보를 확인해 `menu.md`로 정리했습니다.
-3. **정적 홈페이지 제작**: `index.html`, `menu.html`, `menu-detail.html`, `contact.html`을 만들고 공통 스타일과 페이지별 JavaScript로 반응형 디자인과 탐색 기능을 구현했습니다.
-4. **메뉴 데이터 연결**: `menu.md`를 바탕으로 브라우저에서 사용하는 `menu-data.js`를 만들고 메뉴 검색·필터·상세 정보를 연결했습니다.
-5. **랜덤 콘텐츠 및 인터랙션**: 메인 페이지에 메뉴 12개를 중복 없이 무작위로 선택해 순차 표시하고, 히어로 이미지도 서로 다른 사진 두 장을 무작위로 선정하도록 구성했습니다.
-6. **페이지 메타데이터**: 각 페이지의 제목, description, Open Graph 제목을 화면 내용에 맞추고 검색 색인을 허용했습니다.
-7. **검색엔진 설정 병합**: `robots` 브랜치의 `robots.txt`와 `sitemap.xml`을 `main`에 병합하고 페이지 메타데이터와의 충돌을 해결했습니다. 크롤링은 공개 페이지 전체에 허용하고 사이트맵은 배포 URL을 가리킵니다.
-8. **저장소 문서화·배포**: 개발 과정과 사용 방법을 이 README에 기록하고, 공개 배포 주소에서 사이트를 확인했습니다.
+### 회원과 선호 메뉴
 
-## 로컬에서 확인
+- 회원가입, 로그인, 이메일 저장 선택, 회원 정보 조회를 제공합니다.
+- 로그인한 사용자는 홈페이지 추천 메뉴와 메뉴 목록의 하트로 선호 메뉴를 등록·해제합니다.
+- 등록된 하트는 분홍색으로 표시하며, 상태를 D1에 저장해 페이지 이동·새로고침 후 다시 불러옵니다.
+- 홈페이지에서는 하트를 바꿀 때 추천 메뉴를 다시 추첨하지 않습니다.
+- 내 정보 페이지의 상단 로그아웃은 세션을 종료하고 로그인 화면으로 이동합니다. 본문 가운데 로그아웃 버튼은 제거했습니다.
 
-Cloudflare Pages Functions 및 D1을 포함해 실행하려면 Node.js와 Wrangler가 필요합니다. 회원가입·로그인은 `/api/auth/signup`, `/api/auth/login`, `/api/auth/me`에서 처리합니다. 비밀번호는 scrypt 해시만 D1에 저장하고 HttpOnly 세션 쿠키를 사용합니다. 로그인 화면의 이메일 저장 선택은 성공한 이메일만 브라우저 `localStorage`에 저장하며 비밀번호는 저장하지 않습니다. 문의 API `/api/inquiries`는 POST(저장)를 공개하고, GET(목록), PUT(수정), DELETE(소프트 삭제)는 Cloudflare Access 보호를 전제로 합니다. 공개 문의 화면은 관리자 목록을 숨기며 Access가 승인한 요청에만 목록을 표시합니다. 관리자 문의 화면 `/admin.html`은 별도 관리자 세션으로 보호하며 답변을 D1에 저장합니다. 문의 내역과 계정은 같은 D1에 저장합니다.
+### 문의와 관리자 답변
 
-독립 API Worker는 `wrangler.worker.toml`로 배포하며, Pages Functions와 같은 D1 데이터베이스를 `DB` binding으로 사용합니다. Worker의 `/health`는 DB 연결과 테이블별 행 수를 반환합니다.
+- 문의 유형은 일반 문의, 메뉴 문의, 매장 이용 문의, 제휴 문의, 기타입니다.
+- 헤더의 ‘문의하기’ 링크는 로그인 상태를 확인합니다. 문의 작성 API 자체는 공개 POST로 유지되어 있습니다.
+- ‘내 정보 → 문의 확인하기’에서 로그인 계정의 이메일과 일치하는 문의를 조회하고, 상세 내용과 관리자 답변을 확인합니다.
+- 관리자 페이지는 별도 관리자 세션으로 보호합니다. 문의를 유형별로 묶어 건수를 표시하고, 카테고리를 선택해 볼 수 있습니다.
+- 관리자는 문의 상세를 확인하고 답변을 저장할 수 있습니다. 이메일 전송이 실패하거나 미설정이어도 답변 저장 결과는 유지됩니다.
+- 답변 알림 메일에는 답변 본문 대신 등록 완료 안내와 문의 확인 링크를 넣습니다.
 
-### 관리자 및 답변 이메일 설정
+## 페이지 구성
 
-- 관리자 페이지: `/admin.html`. 로컬 `localhost` 개발에서만 `admin` / `admin1234` 기본 로그인을 허용합니다.
-- Production에서는 `ADMIN_PASSWORD` Pages secret을 설정하지 않으면 관리자 로그인이 거부됩니다. 강한 비밀번호를 Cloudflare Dashboard → Workers & Pages → `coffee` → Settings → Variables and Secrets에서 Production secret `ADMIN_PASSWORD`로 직접 등록해야 합니다. 비밀번호는 코드나 명령행에 입력하지 마세요.
-- 로컬 `http://localhost`에서는 관리자 기본 계정 `admin` / `admin1234`가 활성화됩니다. 이 자격 증명은 localhost에서만 동작합니다.
+| 경로 | 용도 | 접근 방식 |
+|---|---|---|
+| `/` 또는 `/index.html` | 홈페이지·오늘의 추천 메뉴 | 공개, 하트 저장은 회원 로그인 필요 |
+| `/menu.html` | 메뉴 검색·카테고리·내 선호 메뉴 | 공개, 선호 조회·변경은 회원 로그인 필요 |
+| `/menu-detail.html?id=메뉴ID` | 메뉴 상세·영양 정보 | 공개 |
+| `/signup.html`, `/login.html` | 회원가입·로그인 | 공개 |
+| `/account.html` | 회원 정보·문의 확인 링크 | 회원 세션으로 정보 조회 |
+| `/contact.html` | 문의 작성 | 헤더 진입 시 로그인 확인, 작성 API는 공개 |
+| `/inquiries.html` | 본인 문의 목록 | 회원 세션 필요 |
+| `/inquiry-detail.html?id=문의ID` | 본인 문의 상세·답변 | 회원 세션 및 작성 이메일 일치 필요 |
+| `/admin.html` | 관리자 로그인·문의 분류·답변 | 별도 관리자 세션 필요 |
 
-```sh
-npx wrangler pages secret put ADMIN_PASSWORD --project-name coffee
-```
+Cloudflare Pages에서는 `.html` 경로가 확장자 없는 경로로 리디렉션될 수 있습니다. 회원 정보, 문의 내역·상세, 관리자 페이지는 `noindex,nofollow`로 설정되어 있습니다. 공개 페이지의 색인 설정은 각 HTML, [`robots.txt`](robots.txt), [`sitemap.xml`](sitemap.xml)에서 관리합니다. 검색 색인 설정은 접근 권한을 대신하지 않습니다.
 
-- 답변 알림 이메일은 Cloudflare Email Sending을 사용할 발신 도메인/서브도메인이 계정에 검증·활성화되고 Pages Function에서 `EMAIL` binding 및 `EMAIL_FROM` 값을 사용할 수 있어야 합니다. 현재 Cloudflare 계정에는 발신 도메인/Email Sending 접근이 설정되지 않아 답변은 D1에 저장되지만 이메일 상태는 `not_configured`로 기록됩니다.
-- 알림 이메일에는 답변 본문을 넣지 않고, 답변 등록 완료 안내와 문의 확인 URL만 포함합니다.
+## 기술 구성과 데이터
 
-```sh
-npm install --save-dev wrangler
-npx wrangler d1 create compose-coffee-inquiries
-```
-
-위 명령은 Cloudflare 로그인/API 토큰이 있어야 합니다. 출력된 `database_id`를 `wrangler.toml`의 placeholder와 교체하고, Cloudflare Pages 프로젝트 설정의 **Settings → Functions → D1 database bindings**에서 변수명을 `DB`로 지정해 같은 데이터베이스를 연결하세요. Preview 및 Production 환경 각각에 바인딩을 구성해야 합니다. 이후 Cloudflare Zero Trust Access에서 `your-pages-domain/api/inquiries` 경로에 관리자 전용 self-hosted application 및 허용 정책을 적용하세요. Access 정책이 없는 상태에서는 GET 목록/DELETE가 401을 반환하도록 설계했습니다. 로컬 Pages 개발 서버에서는 `cf-access-authenticated-user-email` 헤더로 관리자 인증을 모의할 수 있습니다. 로컬 D1 테이블을 만든 뒤 개발 서버를 실행합니다.
-
-```sh
-npx wrangler d1 migrations apply compose-coffee-inquiries --local
-npx wrangler pages dev .
-```
-
-로컬 사이트는 기본적으로 `http://localhost:8788`에서 실행됩니다. Cloudflare 배포 전에는 대시보드에서 Pages 프로젝트에 `DB` D1 바인딩과 Access 보호를 설정하고, 원격 데이터베이스에 마이그레이션을 적용해야 합니다.
-
-```sh
-npx wrangler d1 migrations apply compose-coffee-inquiries --remote
-```
-
-## 파일 구성
-
-| 파일 | 역할 |
+| 구성 | 역할 |
 |---|---|
-| `index.html` | 홈페이지 메인 화면 |
-| `menu.html` | 메뉴 목록, 검색, 카테고리 필터 |
-| `menu-detail.html` | 선택한 메뉴의 사진과 영양 상세 |
-| `contact.html` | 문의 제목·내용 작성 및 문의 확인 페이지 링크 |
-| `inquiries.html` | 로그인 계정에 연결된 문의 제목 목록 |
-| `inquiry-detail.html` | 로그인한 작성자만 확인할 수 있는 문의 상세 |
-| `inquiries.js` | 본인 이메일에 연결된 문의 제목 목록 조회 |
-| `inquiry-detail.js` | 문의 상세 조회 및 접근권한 처리 |
-| `account.css` | 문의 목록과 상세 페이지 스타일 |
-| `account.html` | 로그인 세션으로 확인하는 회원 정보 페이지 |
-| `account.js` | 인증된 회원 정보 조회 및 로그아웃 |
-| `contact.css` | 문의하기 페이지의 폼 레이아웃과 반응형 스타일 |
-| `contact.js` | 문의 폼 및 D1 API 연결, 내역 조회·삭제, 모바일 메뉴 동작 |
-| `functions/api/inquiries.js` | 문의 데이터 저장·조회·삭제 Pages Function API |
-| `functions/api/auth/` | D1 기반 회원가입, 로그인, 세션 확인·로그아웃 Pages Function API |
-| `auth.js` | 회원가입·로그인 폼을 API에 연결하는 브라우저 코드 |
-| `workers/api.js` | D1 연결 상태 확인용 독립 Cloudflare Worker |
-| `migrations/0001_create_inquiries.sql` | 문의 내역 테이블 생성 마이그레이션 |
-| `migrations/0002_add_update_and_delete_timestamps.sql` | 문의 수정·삭제 시각 컬럼 추가 마이그레이션 |
-| `migrations/0003_create_users.sql` | 회원가입 데이터 저장용 유저 테이블 마이그레이션 |
-| `migrations/0004_add_user_session_fields.sql` | 사용자 세션 해시 및 만료 시각 컬럼 마이그레이션 |
-| `migrations/0005_add_inquiry_subject.sql` | 문의 제목 컬럼 추가 및 기존 문의 제목 채우기 |
-| `wrangler.toml` | Cloudflare Pages 설정 및 D1 바인딩 |
-| `wrangler.worker.toml` | 독립 Worker와 동일 D1 바인딩 설정 |
-| `styles.css` | 색상, 레이아웃, 반응형 및 애니메이션 스타일 |
-| `app.js` | 랜덤 메뉴·사진, 필터, 검색, 상세 페이지 동작 |
-| `menu-data.js` | 메뉴 페이지에서 읽는 구조화 메뉴 데이터 |
-| `menu.md` | 메뉴명, 제품 사진 URL, 영양 값, 공식 상세 링크 원본 문서 |
-| `guide.md` | 홈페이지 제작 가이드라인 |
-| `review.md` | 검토 의견 및 수정 요청 기록 |
-| `robots.txt` | 검색 로봇 접근 허용 및 사이트맵 위치 안내 |
-| `sitemap.xml` | 공개 페이지 사이트맵 |
+| HTML / CSS / JavaScript | 별도 프런트엔드 빌드 없이 정적 화면과 인터랙션 제공 |
+| Cloudflare Pages | 정적 파일 호스팅 |
+| Pages Functions | `/api` 아래 회원·문의·관리자·선호 메뉴 처리 |
+| Cloudflare D1 | 회원, 세션 해시, 문의, 답변, 선호 메뉴 저장 |
+| 독립 Worker | `/health`에서 D1 연결 및 문의·회원 행 수 확인 |
+| Wrangler | 로컬 실행, D1 마이그레이션 및 배포 도구 |
 
-## 메뉴 데이터 관리
+Pages와 독립 Worker는 각각 `wrangler.toml`, `wrangler.worker.toml`을 사용하고, 같은 D1 데이터베이스를 `DB`로 바인딩합니다. `nodejs_compat`가 설정되어 있습니다. Worker는 회원·문의 API 서버가 아니라 연결 확인용입니다.
 
-메뉴 정보의 문서 기준은 `menu.md`입니다. 메뉴를 갱신할 때 공식 페이지에서 메뉴명, 카테고리, 사진, 상세 링크 및 영양 값을 다시 확인하고 `menu-data.js`에도 같은 변경을 반영하세요. 확인되지 않은 영양 값이나 알레르기 정보는 추정해 채우지 않습니다.
+### 데이터베이스 마이그레이션
 
-## Git 브랜치
+기존 파일을 수정하기보다 새 마이그레이션을 추가해 변경 이력을 유지합니다.
 
-- `main`: 홈페이지, 페이지별 제목·디스크립션, robots 및 sitemap 설정을 포함하는 기본 브랜치
-- `page_title`: 페이지 제목·description·Open Graph 메타데이터 변경을 작업하고 `main`에 병합한 브랜치
-- `robots`: 크롤러 허용 규칙과 배포 주소 기반 사이트맵을 작업하고 `main`에 병합한 브랜치
-- `feature/robots-page-titles`: 초기 브랜치 설정 과정에서 생성된 이전 작업 브랜치
+| 파일 | 변경 내용 |
+|---|---|
+| [`0001_create_inquiries.sql`](migrations/0001_create_inquiries.sql) | 문의 테이블 |
+| [`0002_add_update_and_delete_timestamps.sql`](migrations/0002_add_update_and_delete_timestamps.sql) | 문의 수정·소프트 삭제 시각 |
+| [`0003_create_users.sql`](migrations/0003_create_users.sql) | 회원 테이블 |
+| [`0004_add_user_session_fields.sql`](migrations/0004_add_user_session_fields.sql) | 회원 세션 해시·만료 시각 |
+| [`0005_add_inquiry_subject.sql`](migrations/0005_add_inquiry_subject.sql) | 문의 제목 |
+| [`0006_add_admin_replies.sql`](migrations/0006_add_admin_replies.sql) | 관리자 세션·문의 답변·메일 상태 |
+| [`0007_create_favorite_menus.sql`](migrations/0007_create_favorite_menus.sql) | 회원별 선호 메뉴, `(user_id, menu_id)` 복합 기본 키 |
 
-## 공식 자료
+선호 메뉴는 회원 ID와 메뉴 ID를 저장하며 동일 회원의 중복 등록을 막습니다. 문의 소유권은 회원 ID가 아닌 로그인 회원의 이메일과 문의 작성 이메일의 일치 여부로 확인합니다.
+
+## 로컬 실행
+
+Node.js 22 이상과 npm이 필요합니다. 저장소에 포함된 Wrangler 버전의 Node 요구 사항을 기준으로 합니다.
+
+```sh
+git clone https://github.com/JKim-99/coffee.git
+cd coffee
+npm ci
+npx wrangler d1 migrations apply compose-coffee-inquiries --local
+npx wrangler pages dev . --port 8788
+```
+
+실행 후 [로컬 홈페이지](http://127.0.0.1:8788/), [회원 정보](http://127.0.0.1:8788/account.html), [관리자 페이지](http://127.0.0.1:8788/admin.html)를 확인합니다. 단순 정적 파일 서버만으로는 회원·문의·선호 메뉴 API가 동작하지 않습니다.
+
+- 로컬 D1은 `.wrangler/` 아래에 생성되며 원격 D1과 별개입니다.
+- 관리자 환경변수 `ADMIN_PASSWORD`가 없을 때, 호스트가 `localhost` 또는 `127.0.0.1`인 로컬 환경에서만 `admin` / `admin1234` 로그인을 허용합니다.
+- 포트가 사용 중이면 기존 서버를 확인하거나 다른 포트를 지정합니다. 디버거 포트도 충돌하면 `--inspector-port`를 별도로 지정합니다.
+- `.wrangler/`, `.dev.vars*`, `node_modules/`는 버전 관리에서 제외합니다. 로컬 DB·테스트 데이터·환경변수를 커밋하지 않습니다.
+
+## 검증
+
+추가 패키지 없이 Node의 기본 테스트 실행기를 사용합니다.
+
+```sh
+node --test harness/*.test.cjs
+node --check app.js
+node --check favorites.js
+node --check admin.js
+node --check account.js
+node --check site-auth.js
+git diff --check
+```
+
+현재 자동 검사 12개는 실제 화면 스크립트를 최소 DOM·모의 API 환경에서 실행합니다.
+
+- [`favorites.test.cjs`](harness/favorites.test.cjs): 홈페이지 스크립트 연결, 저장 상태 복원, 등록·해제 요청, 추천 카드 유지, 초기 조회 중 클릭·중복 클릭, 비로그인 안내, 저장 실패, 메뉴 선호 필터
+- [`account-admin.test.cjs`](harness/account-admin.test.cjs): 내 정보 및 다른 페이지의 상단 로그아웃, 실패 시 재시도, 가운데 버튼 제거, 문의 카테고리 묶음·건수·필터·새로고침, 빈 목록 및 HTML 이스케이프
+
+이 검사는 실제 브라우저, Cloudflare D1, 운영 이메일 발송의 통합 검증을 대체하지 않습니다. 최근 기능 수정 시 로컬 Wrangler 서버 충돌로 실제 API 통합 검증을 완료하지 못했습니다. 운영 전에는 로그인 → 선호 등록 → 새로고침 → 문의 작성 → 관리자 답변 → 본인 답변 확인 → 로그아웃 흐름을 별도로 확인해야 합니다.
+
+## 배포와 운영 설정
+
+아래 명령은 운영자가 필요할 때 실행하는 절차이며, 이 문서 작성 과정에서 배포나 원격 마이그레이션을 실행한 것은 아닙니다.
+
+1. Cloudflare Pages에서 저장소와 `main` 브랜치 연결 상태를 확인합니다. 정적 파일은 저장소 루트에 있으며 별도 앱 빌드는 없습니다.
+2. `wrangler.toml`의 실제 D1 연결과 Pages의 `DB` 바인딩을 확인합니다. 기존 데이터베이스를 사용하는 프로젝트이므로 새 D1을 중복 생성할 필요는 없습니다. 다른 계정에서 운영한다면 해당 계정의 D1 정보로 두 Wrangler 설정을 함께 변경합니다.
+3. Preview·Production 환경의 바인딩과 마이그레이션 적용 대상을 각각 확인합니다. 운영 D1 변경 전에는 백업 및 적용할 SQL을 검토합니다.
+4. 운영 관리자 비밀번호를 Pages secret `ADMIN_PASSWORD`로 등록합니다. 운영에서는 이 값이 없으면 관리자 로그인에 실패합니다.
+5. 기존 `/api/inquiries` 관리 메서드를 사용할 경우 아래의 Cloudflare Access 조건을 적용합니다.
+6. 답변 알림이 필요하면 발신 도메인을 검증하고 `EMAIL` 바인딩과 `EMAIL_FROM`을 준비합니다.
+
+```sh
+# 원격 D1 스키마 적용
+npx wrangler d1 migrations apply compose-coffee-inquiries --remote
+
+# 입력 프롬프트에서 관리자 비밀번호 등록
+npx wrangler pages secret put ADMIN_PASSWORD --project-name coffee
+
+# Pages를 직접 배포하는 경우
+npx wrangler pages deploy . --project-name coffee
+
+# 독립 연결 확인 Worker를 배포하는 경우
+npx wrangler deploy --config wrangler.worker.toml
+```
+
+운영 관리자 비밀번호, 세션 토큰과 실제 회원·문의 데이터는 저장소나 문서에 기록하지 않습니다. 공개 `/health`는 문의·회원 행 수를 반환하므로 운영 시 공개 범위를 고려합니다.
+
+### 인증과 API 경계
+
+- 회원 비밀번호는 scrypt 해시로 저장합니다. 세션은 무작위 토큰을 쿠키로 전달하고 SHA-256 해시와 만료 시각을 D1에 저장합니다.
+- 회원 쿠키는 HttpOnly·SameSite=Lax, 관리자 쿠키는 HttpOnly·SameSite=Strict이며 HTTPS에서 Secure를 사용합니다. 회원 세션은 7일, 관리자 세션은 8시간입니다.
+- 관리자는 별도 쿠키와 관리자 세션 해시를 사용합니다. 일반 회원 로그인으로 관리자 API를 사용할 수 없습니다.
+- ‘이메일 저장’은 로그인에 성공한 이메일만 브라우저 `localStorage`에 저장합니다. 비밀번호는 저장하지 않습니다.
+- 레거시 `/api/inquiries`의 GET·PUT·DELETE는 `cf-access-authenticated-user-email` 헤더 유무를 검사합니다. 애플리케이션 자체에서 Access 토큰을 검증하지 않으므로, Cloudflare Access가 해당 요청을 실제로 보호하고 신뢰 가능한 인증 헤더를 제공하는 구성이 전제입니다. 헤더 검사만으로 운영 보호가 완료된 것으로 간주하면 안 됩니다.
+
+| API | 메서드 | 접근·동작 |
+|---|---|---|
+| `/api/auth/signup` | POST | 회원가입 |
+| `/api/auth/login` | POST | 회원 로그인·세션 발급 |
+| `/api/auth/me` | GET / DELETE | 회원 정보 조회 / 회원 로그아웃 |
+| `/api/my/favorites` | GET / POST / DELETE | 회원의 선호 목록 / 등록 / `?menuId=` 해제 |
+| `/api/my/inquiries` | GET | 회원 이메일에 해당하는 목록, `?id=`로 본인 문의 상세 |
+| `/api/inquiries` | POST | 공개 문의 작성 |
+| `/api/inquiries` | GET / PUT / DELETE | Access 보호 전제의 기존 관리 API, 수정·삭제는 `?id=` |
+| `/api/admin/login` | POST | 관리자 로그인 |
+| `/api/admin/logout` | POST | 관리자 로그아웃 |
+| `/api/admin/inquiries` | GET / POST | 관리자 문의 목록 / `?id=`로 답변 저장 |
+| 독립 Worker `/health` | GET | D1 연결 및 문의·회원 행 수 |
+
+회원 문의 목록은 최근 100건, 관리자 문의 목록은 최근 200건을 반환합니다. 관리자 화면의 카테고리 건수와 필터는 불러온 목록을 기준으로 하며, 전체 DB에 대한 집계나 서버 페이지네이션은 구현되어 있지 않습니다.
+
+### 답변 이메일 상태
+
+| 상태 | 의미 |
+|---|---|
+| `not_sent` | 아직 답변 알림을 보내지 않음 |
+| `pending` | 답변 저장 후 알림 처리 중 |
+| `sent` | 이메일 전송 호출 성공 |
+| `not_configured` | `EMAIL` 또는 `EMAIL_FROM`이 없음 |
+| `failed` | 이메일 전송 처리 실패 |
+
+메일 실패와 관계없이 저장된 답변은 회원 문의 상세 화면에서 확인할 수 있습니다. 운영 발신 도메인·바인딩 설정 및 실제 수신 여부는 별도 확인이 필요합니다. 저장소만으로 현재 Cloudflare 계정의 설정 완료 여부를 판단할 수 없습니다.
+
+## 주요 파일
+
+| 파일·디렉터리 | 역할 |
+|---|---|
+| `index.html`, `menu.html`, `menu-detail.html` | 홈페이지·메뉴 목록·상세 |
+| `app.js`, `menu-data.js`, `styles.css` | 메뉴 렌더링·검색·공통 화면 |
+| `favorites.js` | 홈페이지와 메뉴 목록의 선호 메뉴 조회·저장 |
+| `signup.html`, `login.html`, `auth.js`, `auth.css` | 회원가입·로그인 화면 및 처리 |
+| `account.html`, `account.js` | 회원 정보 조회·문의 확인 링크 |
+| `site-auth.js` | 회원 내비게이션·문의 링크 로그인 확인·상단 로그아웃 |
+| `contact.html`, `contact.js`, `contact.css` | 문의 작성 및 기존 Access 관리 이력 |
+| `inquiries.html`, `inquiries.js` | 회원 본인의 문의 목록 |
+| `inquiry-detail.html`, `inquiry-detail.js`, `account.css` | 본인 문의 상세·답변 및 문의 화면 스타일 |
+| `admin.html`, `admin.js`, `admin.css` | 관리자 로그인·문의 카테고리·답변 화면 |
+| `functions/api/` | 회원·문의·선호·관리자 API |
+| `migrations/` | 순서대로 적용하는 D1 스키마 변경 |
+| `workers/api.js` | 독립 D1 연결 확인 Worker |
+| `wrangler.toml`, `wrangler.worker.toml` | Pages·Worker 설정과 D1 바인딩 |
+| `harness/*.test.cjs` | 자동 회귀 검사 |
+| `harness/agent.md`, `harness/todo.md` | 작업 규칙·작업 메모, 일부 체크 항목은 과거 진행 상태 |
+| `guide.md`, `review.md`, `menu.md` | 제작 지침·초기 검토 요청·메뉴 원본 자료 |
+| `robots.txt`, `sitemap.xml` | 검색 크롤링과 사이트맵 |
+
+## 커밋 이력으로 보는 개발 과정
+
+전체 이력은 `git log --reverse --oneline`으로 확인할 수 있습니다. 아래는 현재 기능으로 이어지는 주요 커밋입니다.
+
+| 단계 | 주요 커밋 | 구현·변경 |
+|---|---|---|
+| 제작 기반 | `9d5bc18`, `85dd043`, `9210ed5` | 제작 지침, 메뉴·영양 자료, 정적 홈페이지 |
+| 랜덤 추천 | `1a190b9`, `b7927c4`, `c77fc74` | 추천 메뉴 무작위 선정, 히어로 사진, 최대 12개 카드 |
+| 검색 메타데이터 | `d1c96c1`, `b6dbf8e`, `a1c186d`, `f907e14` | 페이지 제목·설명, robots, 사이트맵 및 병합 |
+| 메뉴 표시·문의 | `884e9d1`, `c6bf5fb`, `119104f`, `2505ff9` | 메뉴명 정리, 문의 화면, D1 저장, 수정·삭제 시각 |
+| 회원·D1 연결 | `830d882`, `861645d`, `1add84e`, `777bb9b` | 회원 테이블, 공유 D1 Worker, 인증 API, Cloudflare 해싱 수정 |
+| 회원 정보·문의 이력 | `f2112a6`, `6c36e6e`, `8c2ec4b`, `10db415`, `4e2d74e` | 프로필, 회원 내비게이션, 본인 문의 목록·상세, 이메일 저장 |
+| 관리자 답변 | `f6bf38d`, `5442956`, `a01625a`, `8f1a816` | 별도 관리자 세션, 답변 저장·알림, 회원 답변 확인 화면 |
+| 선호 메뉴 | `74d34e8`, `c473e03`, `0c90acb`, `3d0f067`, `d9e8cf0`, `01b5ef2` | 회원별 선호 저장, 분홍 하트, 상태 갱신, 필터 유지, ID 정규화 |
+| 로그인 확인 | `6980af6` | 헤더 문의 링크 진입 시 로그인 확인 |
+| 홈페이지 하트 수정 | `b987c41` | 추천 메뉴 저장 로직 연결, 공통 하트 갱신, 초기 조회·중복 클릭 처리 및 검사 |
+| 관리자 분류·로그아웃 수정 | `9fb1a99` | 문의 카테고리별 묶음·필터, 상단 로그아웃 연결, 가운데 버튼 제거 및 검사 |
+
+## 메뉴 자료 관리
+
+메뉴를 변경할 때는 [`menu.md`](menu.md)와 [`menu-data.js`](menu-data.js)를 함께 갱신합니다. 선호 메뉴와 상세 링크가 메뉴 ID를 기준으로 하므로 기존 항목의 ID를 임의로 바꾸지 않습니다. 사진은 외부 공식 사이트 주소를 사용하므로 외부 서비스의 변경·장애 영향을 받을 수 있습니다. 영양 정보와 판매 여부는 제공 시점·매장에 따라 달라질 수 있으며, 확인되지 않은 값은 추정하지 않습니다.
 
 - [컴포즈커피 공식 홈페이지](https://composecoffee.com/index1)
-- [브랜드 소개](https://composecoffee.com/about)
+- [공식 브랜드 소개](https://composecoffee.com/about)
 - [공식 메뉴·영양 정보](https://composecoffee.com/index.php?mid=compose&act=dispCafemenuGalleryList)
-- [매장 찾기](https://composecoffee.com/findstore)
-- [고객의 소리](https://composecoffee.com/custumer)
+- [공식 매장 찾기](https://composecoffee.com/findstore)
