@@ -1,6 +1,6 @@
 # 컴포즈커피 소개 홈페이지
 
-컴포즈커피의 브랜드와 메뉴를 소개하는 정적 웹사이트입니다. 순수 HTML, CSS, JavaScript로 제작했으며, 메뉴명·사진·영양 정보는 프로젝트의 `menu.md`를 기준으로 사용합니다.
+컴포즈커피의 브랜드와 메뉴를 소개하는 Cloudflare Pages 웹사이트입니다. HTML, CSS, JavaScript와 Pages Functions를 사용하며, 메뉴명·사진·영양 정보는 프로젝트의 `menu.md`를 기준으로 사용합니다. 문의 내역은 Cloudflare D1(SQLite)에 저장합니다.
 
 ## 사이트
 
@@ -33,7 +33,7 @@
 - 페이지 진입 또는 새로고침 시 랜덤 이미지와 추천 메뉴를 새로 선정
 - 메뉴 페이지에서 카테고리 필터와 메뉴 이름 검색 제공
 - 메뉴 카드 선택 시 상세 페이지에서 사진과 `menu.md`의 영양 정보를 표시
-- 문의하기 페이지에서 문의 내역을 브라우저에 저장하고 확인·삭제할 수 있도록 제공
+- 문의하기 페이지에서 문의 내역을 Cloudflare D1에 저장하고 확인·삭제할 수 있도록 제공
 - 반응형 레이아웃, 키보드 접근성 및 모션 감소 설정 고려
 
 ## 개발 과정
@@ -49,7 +49,25 @@
 
 ## 로컬에서 확인
 
-프로젝트 폴더의 `index.html`을 브라우저에서 직접 열 수 있습니다. 페이지가 정상 동작하려면 같은 폴더의 공통 리소스와 해당 페이지별 파일이 함께 있어야 합니다.
+Cloudflare Pages Functions 및 D1을 포함해 실행하려면 Node.js와 Wrangler가 필요합니다. 문의 API는 `/api/inquiries`에서 POST(저장)를 제공하고, GET(목록) 및 DELETE(삭제)는 Cloudflare Access로 인증된 관리자만 사용할 수 있습니다. 데이터는 단일 `inquiries` 테이블에 저장합니다.
+
+```sh
+npm install --save-dev wrangler
+npx wrangler d1 create compose-coffee-inquiries
+```
+
+위 명령은 Cloudflare 로그인/API 토큰이 있어야 합니다. 출력된 `database_id`를 `wrangler.toml`에 넣고, Cloudflare Pages 프로젝트 설정의 **Settings → Functions → D1 database bindings**에서 변수명을 `DB`로 지정해 같은 데이터베이스를 연결하세요. Preview 및 Production 환경 각각에 바인딩을 구성해야 합니다. 이후 Cloudflare Zero Trust Access에서 `your-pages-domain/api/inquiries` 경로에 관리자 전용 self-hosted application 및 허용 정책을 적용하세요. Access 정책이 없는 상태에서는 GET 목록/DELETE가 401을 반환하도록 설계했습니다. 로컬 Pages 개발 서버에서는 `cf-access-authenticated-user-email` 헤더로 관리자 인증을 모의할 수 있습니다. 로컬 D1 테이블을 만든 뒤 개발 서버를 실행합니다.
+
+```sh
+npx wrangler d1 migrations apply compose-coffee-inquiries --local
+npx wrangler pages dev .
+```
+
+로컬 사이트는 기본적으로 `http://localhost:8788`에서 실행됩니다. Cloudflare 배포 전에는 대시보드에서 Pages 프로젝트에 `DB` D1 바인딩과 Access 보호를 설정하고, 원격 데이터베이스에 마이그레이션을 적용해야 합니다.
+
+```sh
+npx wrangler d1 migrations apply compose-coffee-inquiries --remote
+```
 
 ## 파일 구성
 
@@ -60,7 +78,10 @@
 | `menu-detail.html` | 선택한 메뉴의 사진과 영양 상세 |
 | `contact.html` | 고객 문의 및 상담 안내 |
 | `contact.css` | 문의하기 페이지의 폼 레이아웃과 반응형 스타일 |
-| `contact.js` | 문의 폼 검증, 브라우저 내역 저장·조회·삭제, 모바일 메뉴 동작 |
+| `contact.js` | 문의 폼 및 D1 API 연결, 내역 조회·삭제, 모바일 메뉴 동작 |
+| `functions/api/inquiries.js` | 문의 데이터 저장·조회·삭제 Pages Function API |
+| `migrations/0001_create_inquiries.sql` | 단일 문의 내역 테이블 마이그레이션 |
+| `wrangler.toml` | Cloudflare Pages 설정 및 D1 바인딩 |
 | `styles.css` | 색상, 레이아웃, 반응형 및 애니메이션 스타일 |
 | `app.js` | 랜덤 메뉴·사진, 필터, 검색, 상세 페이지 동작 |
 | `menu-data.js` | 메뉴 페이지에서 읽는 구조화 메뉴 데이터 |
