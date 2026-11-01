@@ -26,7 +26,6 @@
   }).then((item) => {
     if (!item) return;
     document.title = `${item.subject} | 문의 상세`;
-    document.getElementById('inquiry-detail-title').textContent = item.subject;
     document.getElementById('detail-topic').textContent = item.topic;
     document.getElementById('detail-subject').textContent = item.subject;
     document.getElementById('detail-message').textContent = item.message;
