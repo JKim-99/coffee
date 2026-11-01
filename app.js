@@ -53,10 +53,11 @@
   function cardMarkup(item, index) {
     const detailUrl = `menu-detail.html?id=${encodeURIComponent(item.id)}`;
     const name = displayName(item.name);
-    return `<a class="menu-card" href="${detailUrl}" style="--card-index:${index};animation-delay:${index * 180}ms" aria-label="${escapeHtml(name)} 메뉴 상세 보기">
-      <div class="menu-card-image"><img src="${escapeHtml(item.image)}" alt="${escapeHtml(name)}" loading="lazy"><span class="card-arrow" aria-hidden="true">↗</span></div>
-      <div class="menu-card-copy"><small>${escapeHtml(item.category)}</small><h3>${escapeHtml(name)}</h3></div>
-    </a>`;
+    const isFavorite = Boolean(window.COMPOSE_FAVORITE_IDS?.has(String(item.id)));
+    return `<article class="menu-card" data-menu-id="${escapeHtml(item.id)}" style="--card-index:${index};animation-delay:${index * 180}ms">
+      <div class="menu-card-image"><a class="menu-card-image-link" href="${detailUrl}" aria-label="${escapeHtml(name)} 메뉴 상세 보기"><img src="${escapeHtml(item.image)}" alt="${escapeHtml(name)}" loading="lazy"><span class="card-arrow" aria-hidden="true">↗</span></a><button class="favorite-toggle${isFavorite ? ' is-favorite' : ''}" type="button" data-favorite-id="${escapeHtml(item.id)}" aria-pressed="${isFavorite}" aria-label="${escapeHtml(name)} 선호 메뉴 ${isFavorite ? '해제' : '등록'}">${isFavorite ? '♥' : '♡'}</button></div>
+      <a class="menu-card-copy" href="${detailUrl}"><small>${escapeHtml(item.category)}</small><h3>${escapeHtml(name)}</h3></a>
+    </article>`;
   }
 
   const featuredGrid = document.getElementById('featured-grid');
@@ -89,15 +90,18 @@
     const count = document.getElementById('result-count');
     const empty = document.getElementById('empty-state');
     let selectedCategory = '전체';
+      let favoriteMenuIds = new Set();
 
-    tabs.innerHTML = ['전체', ...categories].map((category, index) =>
+    tabs.innerHTML = ['전체', '내 선호 메뉴', ...categories].map((category, index) =>
       `<button class="category-tab" type="button" data-category="${escapeHtml(category)}" aria-pressed="${index === 0}">${escapeHtml(category)}</button>`
     ).join('');
 
     function renderMenu() {
       const query = search.value.trim().toLocaleLowerCase('ko');
       const filtered = menu.filter((item) =>
-        (selectedCategory === '전체' || item.category === selectedCategory) && displayName(item.name).toLocaleLowerCase('ko').includes(query)
+        (selectedCategory === '전체' || (selectedCategory === '내 선호 메뉴'
+          ? favoriteMenuIds.has(String(item.id))
+          : item.category === selectedCategory)) && displayName(item.name).toLocaleLowerCase('ko').includes(query)
       );
       menuGrid.innerHTML = filtered.map(cardMarkup).join('');
       count.textContent = `${filtered.length}개 메뉴`;
@@ -105,7 +109,14 @@
       menuGrid.hidden = filtered.length === 0;
     }
 
+    window.setFavoriteMenuIds = (ids) => {
+      favoriteMenuIds = new Set(ids.map(String));
+      renderMenu();
+    };
+
     tabs.addEventListener('click', (event) => {
+      const favorite = event.target.closest('[data-favorite-id]');
+      if (favorite) return;
       const button = event.target.closest('[data-category]');
       if (!button) return;
       selectedCategory = button.dataset.category;
