@@ -84,6 +84,7 @@
     }
   }
 
+  let renderMenu = () => {};
   const menuGrid = document.getElementById('menu-grid');
   if (menuGrid) {
     const tabs = document.getElementById('category-tabs');
@@ -97,7 +98,7 @@
       `<button class="category-tab" type="button" data-category="${escapeHtml(category)}" aria-pressed="${index === 0}">${escapeHtml(category)}</button>`
     ).join('');
 
-    function renderMenu() {
+    renderMenu = () => {
       const query = search.value.trim().toLocaleLowerCase('ko');
       const filtered = menu.filter((item) =>
         (selectedCategory === '전체' || (selectedCategory === '내 선호 메뉴'
@@ -108,20 +109,6 @@
       count.textContent = `${filtered.length}개 메뉴`;
       empty.hidden = filtered.length > 0;
       menuGrid.hidden = filtered.length === 0;
-    }
-
-    window.setFavoriteMenuIds = (ids) => {
-      favoriteMenuIds = new Set(ids.map(String));
-      window.COMPOSE_FAVORITE_IDS = [...favoriteMenuIds];
-      renderMenu();
-      menuGrid.querySelectorAll('[data-favorite-id]').forEach((button) => {
-        const isFavorite = favoriteMenuIds.has(button.dataset.favoriteId);
-        button.classList.toggle('is-favorite', isFavorite);
-        button.setAttribute('aria-pressed', String(isFavorite));
-        const item = menu.find((menuItem) => String(menuItem.id) === button.dataset.favoriteId);
-        button.setAttribute('aria-label', `${displayName(item?.name)} 선호 메뉴 ${isFavorite ? '해제' : '등록'}`);
-        button.textContent = isFavorite ? '♥' : '♡';
-      });
     };
 
     tabs.addEventListener('click', (event) => {
@@ -136,6 +123,20 @@
     search.addEventListener('input', renderMenu);
     renderMenu();
   }
+
+  window.setFavoriteMenuIds = (ids) => {
+    favoriteMenuIds = new Set(ids.map(String));
+    window.COMPOSE_FAVORITE_IDS = [...favoriteMenuIds];
+    renderMenu();
+    document.querySelectorAll('[data-favorite-id]').forEach((button) => {
+      const isFavorite = favoriteMenuIds.has(button.dataset.favoriteId);
+      button.classList.toggle('is-favorite', isFavorite);
+      button.setAttribute('aria-pressed', String(isFavorite));
+      const item = menu.find((menuItem) => String(menuItem.id) === button.dataset.favoriteId);
+      button.setAttribute('aria-label', `${displayName(item?.name)} 선호 메뉴 ${isFavorite ? '해제' : '등록'}`);
+      button.textContent = isFavorite ? '♥' : '♡';
+    });
+  };
 
   const detailRoot = document.getElementById('menu-detail');
   if (detailRoot) {
