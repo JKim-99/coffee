@@ -51,9 +51,22 @@
 
 ## 로컬에서 확인
 
-Cloudflare Pages Functions 및 D1을 포함해 실행하려면 Node.js와 Wrangler가 필요합니다. 회원가입·로그인은 `/api/auth/signup`, `/api/auth/login`, `/api/auth/me`에서 처리합니다. 비밀번호는 scrypt 해시만 D1에 저장하고 HttpOnly 세션 쿠키를 사용합니다. 로그인 화면의 이메일 저장 선택은 성공한 이메일만 브라우저 `localStorage`에 저장하며 비밀번호는 저장하지 않습니다. 문의 API `/api/inquiries`는 POST(저장)를 공개하고, GET(목록), PUT(수정), DELETE(소프트 삭제)는 Cloudflare Access 보호를 전제로 합니다. 공개 문의 화면은 관리자 목록을 숨기며 Access가 승인한 요청에만 목록을 표시합니다. 문의 내역과 계정은 같은 D1에 저장합니다.
+Cloudflare Pages Functions 및 D1을 포함해 실행하려면 Node.js와 Wrangler가 필요합니다. 회원가입·로그인은 `/api/auth/signup`, `/api/auth/login`, `/api/auth/me`에서 처리합니다. 비밀번호는 scrypt 해시만 D1에 저장하고 HttpOnly 세션 쿠키를 사용합니다. 로그인 화면의 이메일 저장 선택은 성공한 이메일만 브라우저 `localStorage`에 저장하며 비밀번호는 저장하지 않습니다. 문의 API `/api/inquiries`는 POST(저장)를 공개하고, GET(목록), PUT(수정), DELETE(소프트 삭제)는 Cloudflare Access 보호를 전제로 합니다. 공개 문의 화면은 관리자 목록을 숨기며 Access가 승인한 요청에만 목록을 표시합니다. 관리자 문의 화면 `/admin.html`은 별도 관리자 세션으로 보호하며 답변을 D1에 저장합니다. 문의 내역과 계정은 같은 D1에 저장합니다.
 
 독립 API Worker는 `wrangler.worker.toml`로 배포하며, Pages Functions와 같은 D1 데이터베이스를 `DB` binding으로 사용합니다. Worker의 `/health`는 DB 연결과 테이블별 행 수를 반환합니다.
+
+### 관리자 및 답변 이메일 설정
+
+- 관리자 페이지: `/admin.html`. 로컬 `localhost` 개발에서만 `admin` / `admin1234` 기본 로그인을 허용합니다.
+- Production에서는 `ADMIN_PASSWORD` Pages secret을 설정하지 않으면 관리자 로그인이 거부됩니다. 강한 비밀번호를 Cloudflare Dashboard → Workers & Pages → `coffee` → Settings → Variables and Secrets에서 Production secret `ADMIN_PASSWORD`로 직접 등록해야 합니다. 비밀번호는 코드나 명령행에 입력하지 마세요.
+- 로컬 `http://localhost`에서는 관리자 기본 계정 `admin` / `admin1234`가 활성화됩니다. 이 자격 증명은 localhost에서만 동작합니다.
+
+```sh
+npx wrangler pages secret put ADMIN_PASSWORD --project-name coffee
+```
+
+- 답변 알림 이메일은 Cloudflare Email Sending을 사용할 발신 도메인/서브도메인이 계정에 검증·활성화되고 Pages Function에서 `EMAIL` binding 및 `EMAIL_FROM` 값을 사용할 수 있어야 합니다. 현재 Cloudflare 계정에는 발신 도메인/Email Sending 접근이 설정되지 않아 답변은 D1에 저장되지만 이메일 상태는 `not_configured`로 기록됩니다.
+- 알림 이메일에는 답변 본문을 넣지 않고, 답변 등록 완료 안내와 문의 확인 URL만 포함합니다.
 
 ```sh
 npm install --save-dev wrangler

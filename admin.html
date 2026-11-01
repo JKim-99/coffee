@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="description" content="관리자 전용 문의 관리 페이지입니다.">
+  <meta name="theme-color" content="#f7c600">
+  <title>관리자 문의 관리 | 컴포즈커피</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="contact.css">
+  <link rel="stylesheet" href="admin.css">
+  <script src="admin.js" defer></script>
+</head>
+<body class="admin-page">
+  <a class="skip-link" href="#main">본문 바로가기</a>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="홈으로"><span class="brand-mark" aria-hidden="true">C</span><span class="brand-word">COMPOSE<span>COFFEE</span></span></a>
+    <nav class="admin-header-nav" aria-label="관리자 메뉴" hidden>
+      <a class="nav-link is-current" href="admin.html" aria-current="page">문의 확인하기</a>
+      <button class="admin-logout" id="admin-logout" type="button">로그아웃</button>
+    </nav>
+  </header>
+
+  <main id="main" class="admin-main section-wrap">
+    <section class="admin-login-card" id="admin-login-panel" aria-labelledby="admin-login-title">
+      <p class="eyebrow">ADMIN</p>
+      <h1 id="admin-login-title">관리자 로그인</h1>
+      <p>문의 답변 관리를 위해 관리자 계정으로 로그인해 주세요.</p>
+      <form id="admin-login-form" class="admin-login-form">
+        <label for="admin-username">아이디</label>
+        <input id="admin-username" name="username" autocomplete="username" required value="admin">
+        <label for="admin-password">비밀번호</label>
+        <input id="admin-password" name="password" type="password" autocomplete="current-password" required>
+        <button class="button button-dark" type="submit">로그인</button>
+      </form>
+      <p class="admin-status" id="admin-login-status" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="admin-inquiries" id="admin-inquiries-panel" hidden aria-labelledby="admin-inquiries-title">
+      <div class="admin-heading">
+        <div><p class="eyebrow">INQUIRY MANAGEMENT</p><h1 id="admin-inquiries-title">문의 확인하기</h1></div>
+        <button class="button button-outline" id="refresh-inquiries" type="button">새로고침</button>
+      </div>
+      <p class="admin-status" id="admin-list-status" role="status" aria-live="polite"></p>
+      <div class="admin-inquiry-layout">
+        <div class="admin-inquiry-list" id="admin-inquiry-list" aria-label="문의 목록"></div>
+        <section class="admin-reply-panel" id="admin-reply-panel" hidden aria-labelledby="reply-title">
+          <p class="eyebrow">REPLY</p>
+          <h2 id="reply-title">문의 상세 및 답변</h2>
+          <dl class="admin-inquiry-meta">
+            <div><dt>제목</dt><dd id="selected-subject"></dd></div>
+            <div><dt>문의자</dt><dd id="selected-contact"></dd></div>
+            <div><dt>문의 내용</dt><dd id="selected-message"></dd></div>
+          </dl>
+          <form id="reply-form" class="admin-reply-form">
+            <label for="reply-text">답변 내용</label>
+            <textarea id="reply-text" name="reply" rows="8" maxlength="5000" required placeholder="문의에 대한 답변을 작성해 주세요."></textarea>
+            <p class="admin-email-note">이메일에는 답변 내용을 포함하지 않고, 답변 등록 완료 알림과 문의 확인 링크만 보냅니다.</p>
+            <button class="button button-dark" type="submit">답변 등록</button>
+          </form>
+          <p class="admin-status" id="admin-reply-status" role="status" aria-live="polite"></p>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer admin-footer">
+    <a class="brand brand-footer" href="index.html"><span class="brand-mark" aria-hidden="true">C</span><span class="brand-word">COMPOSE<span>COFFEE</span></span></a>
+    <div class="footer-links"><a href="index.html">홈</a><a href="contact.html">문의하기</a></div>
+    <small>관리자 페이지 · 권한이 없는 사용자는 문의 정보를 볼 수 없습니다.</small>
+  </footer>
+</body>
+</html>

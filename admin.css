@@ -1,0 +1,38 @@
+.admin-header-nav{display:flex;align-items:center;gap:24px}
+.admin-header-nav[hidden]{display:none}
+.admin-logout{border:0;background:none;color:var(--ink);font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.admin-logout:hover{text-decoration:underline;text-underline-offset:4px}
+.admin-main{min-height:calc(100vh - 327px);padding-top:75px;padding-bottom:100px}
+.admin-login-card{width:min(100%,440px);margin:0 auto;padding:clamp(28px,6vw,48px);background:#fff;border:1px solid var(--line)}
+.admin-login-card h1,.admin-heading h1{font-size:clamp(32px,5vw,46px);letter-spacing:-.06em;margin:0}
+.admin-login-card>p:not(.eyebrow){font-size:12px;line-height:1.7;color:var(--muted)}
+.admin-login-form{display:grid;gap:11px;margin-top:26px}
+.admin-login-form label,.admin-reply-form label{font-size:12px;font-weight:700;margin-top:8px}
+.admin-login-form input,.admin-reply-form textarea{width:100%;border:1px solid #dcd9cf;background:#fff;padding:13px 14px;font:inherit;font-size:13px;outline:0}
+.admin-login-form input{height:48px}
+.admin-login-form input:focus,.admin-reply-form textarea:focus{border-color:var(--ink);box-shadow:0 0 0 3px rgba(247,198,0,.2)}
+.admin-login-form button{margin-top:15px;border:0;cursor:pointer}
+.admin-login-form button:disabled,.admin-reply-form button:disabled{opacity:.6;cursor:wait}
+.admin-status{font-size:12px;line-height:1.7;color:var(--muted);margin:14px 0}
+.admin-heading{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-bottom:22px}
+.admin-heading .eyebrow{margin-bottom:9px}
+.admin-heading .button{border:1px solid var(--ink);cursor:pointer}
+.admin-inquiry-layout{display:grid;grid-template-columns:minmax(260px,.8fr) minmax(0,1.2fr);gap:22px;align-items:start}
+.admin-inquiry-list{display:grid;gap:9px;max-height:75vh;overflow:auto}
+.admin-inquiry-item{display:grid;gap:7px;text-align:left;padding:16px;background:#fff;border:1px solid var(--line);font:inherit;cursor:pointer}
+.admin-inquiry-item:hover,.admin-inquiry-item.is-selected{border-color:var(--ink);box-shadow:inset 3px 0 var(--yellow)}
+.admin-inquiry-item-title{font-size:13px;font-weight:800;line-height:1.5}
+.admin-inquiry-item-meta{font-size:10px;color:var(--muted);overflow-wrap:anywhere}
+.admin-reply-panel{padding:24px;background:#fff;border:1px solid var(--line)}
+.admin-reply-panel[hidden]{display:none}
+.admin-reply-panel h2{font-size:22px;letter-spacing:-.04em;margin:0 0 20px}
+.admin-inquiry-meta{margin:0;border-top:1px solid var(--line)}
+.admin-inquiry-meta>div{padding:13px 0;border-bottom:1px solid var(--line)}
+.admin-inquiry-meta dt{font-size:10px;color:var(--muted);margin-bottom:6px}
+.admin-inquiry-meta dd{font-size:12px;line-height:1.75;white-space:pre-wrap;overflow-wrap:anywhere;margin:0}
+.admin-reply-form{display:grid;gap:10px;margin-top:20px}
+.admin-reply-form textarea{min-height:150px;resize:vertical;line-height:1.7}
+.admin-email-note{font-size:10px;line-height:1.7;color:var(--muted);margin:0}
+.admin-reply-form button{border:0;cursor:pointer;margin-top:8px}
+.admin-footer{min-height:180px}
+@media(max-width:760px){.admin-main{padding-top:45px;padding-bottom:70px}.admin-inquiry-layout{grid-template-columns:1fr}.admin-inquiry-list{max-height:45vh}.admin-heading{align-items:center}.admin-reply-panel{padding:19px}}
