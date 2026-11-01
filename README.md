@@ -5,6 +5,7 @@
 ## 사이트
 
 - 배포 홈페이지: <https://coffee-4bx.pages.dev/>
+- D1 연결 확인용 Worker: <https://compose-coffee-api.whddnjsqkd123.workers.dev/health>
 - 메뉴 목록: <https://coffee-4bx.pages.dev/menu.html>
 - 문의하기: <https://coffee-4bx.pages.dev/contact.html>
 - 메뉴 상세: 메뉴 카드에서 해당 상세 화면으로 이동합니다.
@@ -51,6 +52,8 @@
 
 Cloudflare Pages Functions 및 D1을 포함해 실행하려면 Node.js와 Wrangler가 필요합니다. 문의 API는 `/api/inquiries`에서 POST(저장)를 제공하고, GET(목록), PUT(수정) 및 DELETE(소프트 삭제)는 Cloudflare Access로 인증된 관리자만 사용할 수 있습니다. 데이터는 단일 `inquiries` 테이블에 저장하며 `created_at`, `updated_at`, `deleted_at` 시각을 기록합니다.
 
+독립 API Worker는 `wrangler.worker.toml`로 배포하며, Pages Functions와 같은 D1 데이터베이스를 `DB` binding으로 사용합니다. Worker의 `/health`는 DB 연결과 테이블별 행 수를 반환합니다.
+
 ```sh
 npm install --save-dev wrangler
 npx wrangler d1 create compose-coffee-inquiries
@@ -80,10 +83,12 @@ npx wrangler d1 migrations apply compose-coffee-inquiries --remote
 | `contact.css` | 문의하기 페이지의 폼 레이아웃과 반응형 스타일 |
 | `contact.js` | 문의 폼 및 D1 API 연결, 내역 조회·삭제, 모바일 메뉴 동작 |
 | `functions/api/inquiries.js` | 문의 데이터 저장·조회·삭제 Pages Function API |
+| `workers/api.js` | D1 연결 상태 확인용 독립 Cloudflare Worker |
 | `migrations/0001_create_inquiries.sql` | 문의 내역 테이블 생성 마이그레이션 |
 | `migrations/0002_add_update_and_delete_timestamps.sql` | 문의 수정·삭제 시각 컬럼 추가 마이그레이션 |
 | `migrations/0003_create_users.sql` | 회원가입 데이터 저장용 유저 테이블 마이그레이션 |
 | `wrangler.toml` | Cloudflare Pages 설정 및 D1 바인딩 |
+| `wrangler.worker.toml` | 독립 Worker와 동일 D1 바인딩 설정 |
 | `styles.css` | 색상, 레이아웃, 반응형 및 애니메이션 스타일 |
 | `app.js` | 랜덤 메뉴·사진, 필터, 검색, 상세 페이지 동작 |
 | `menu-data.js` | 메뉴 페이지에서 읽는 구조화 메뉴 데이터 |
