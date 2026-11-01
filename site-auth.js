@@ -13,6 +13,25 @@
     });
   });
 
+  const contactHeaderLink = nav.querySelector('a[href="contact.html"]');
+  contactHeaderLink?.addEventListener('click', async (event) => {
+    event.preventDefault();
+    try {
+      const response = await fetch('/api/auth/me', {
+        credentials: 'same-origin',
+        headers: { accept: 'application/json' }
+      });
+      if (response.ok) {
+        window.location.href = contactHeaderLink.href;
+        return;
+      }
+    } catch (error) {
+      // Treat an unavailable session check as signed out; the protected flow requires login.
+    }
+    window.alert('로그인이 필요합니다. 로그인 페이지로 이동합니다.');
+    window.location.href = 'login.html';
+  });
+
   const loginLink = nav.querySelector('a[href="login.html"]');
   if (!loginLink) return;
 
