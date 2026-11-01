@@ -30,7 +30,7 @@ export async function onRequestGet({ env, request }) {
   const rawLimit = Number(url.searchParams.get('limit') || 50);
   const limit = Number.isInteger(rawLimit) ? Math.min(Math.max(rawLimit, 1), 100) : 50;
   const { results } = await env.DB.prepare(
-    'SELECT id, name, email, topic, message, created_at, updated_at, deleted_at FROM inquiries WHERE deleted_at IS NULL ORDER BY created_at DESC, rowid DESC LIMIT ?'
+    'SELECT id, name, email, topic, subject, message, created_at, updated_at, deleted_at FROM inquiries WHERE deleted_at IS NULL ORDER BY created_at DESC, rowid DESC LIMIT ?'
   ).bind(limit).all();
 
   return json({ inquiries: results });
@@ -49,20 +49,22 @@ export async function onRequestPost({ env, request }) {
   const name = typeof body.name === 'string' ? body.name.trim() : '';
   const email = typeof body.email === 'string' ? body.email.trim() : '';
   const topic = typeof body.topic === 'string' ? body.topic.trim() : '';
+  const subject = typeof body.subject === 'string' ? body.subject.trim() : '';
   const message = typeof body.message === 'string' ? body.message.trim() : '';
 
   if (!name || name.length > 60) return json({ error: '이름은 1~60자로 입력해 주세요.' }, 400);
   if (!isValidEmail(email)) return json({ error: '올바른 이메일 주소를 입력해 주세요.' }, 400);
   if (!allowedTopics.has(topic)) return json({ error: '문의 유형이 올바르지 않습니다.' }, 400);
+  if (!subject || subject.length > 120) return json({ error: '문의 제목은 1~120자로 입력해 주세요.' }, 400);
   if (!message || message.length > 3000) return json({ error: '문의 내용은 1~3000자로 입력해 주세요.' }, 400);
 
   const id = crypto.randomUUID();
   const createdAt = new Date().toISOString();
   await env.DB.prepare(
-    'INSERT INTO inquiries (id, name, email, topic, message, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)'
-  ).bind(id, name, email, topic, message, createdAt, createdAt).run();
+    'INSERT INTO inquiries (id, name, email, topic, subject, message, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+  ).bind(id, name, email, topic, subject, message, createdAt, createdAt).run();
 
-  return json({ inquiry: { id, name, email, topic, message, created_at: createdAt, updated_at: createdAt, deleted_at: null } }, 201);
+  return json({ inquiry: { id, name, email, topic, subject, message, created_at: createdAt, updated_at: createdAt, deleted_at: null } }, 201);
 }
 
 export async function onRequestPut({ env, request }) {
@@ -83,17 +85,19 @@ export async function onRequestPut({ env, request }) {
   const name = typeof body.name === 'string' ? body.name.trim() : '';
   const email = typeof body.email === 'string' ? body.email.trim() : '';
   const topic = typeof body.topic === 'string' ? body.topic.trim() : '';
+  const subject = typeof body.subject === 'string' ? body.subject.trim() : '';
   const message = typeof body.message === 'string' ? body.message.trim() : '';
 
   if (!name || name.length > 60) return json({ error: '이름은 1~60자로 입력해 주세요.' }, 400);
   if (!isValidEmail(email)) return json({ error: '올바른 이메일 주소를 입력해 주세요.' }, 400);
   if (!allowedTopics.has(topic)) return json({ error: '문의 유형이 올바르지 않습니다.' }, 400);
+  if (!subject || subject.length > 120) return json({ error: '문의 제목은 1~120자로 입력해 주세요.' }, 400);
   if (!message || message.length > 3000) return json({ error: '문의 내용은 1~3000자로 입력해 주세요.' }, 400);
 
   const updatedAt = new Date().toISOString();
   const result = await env.DB.prepare(
-    'UPDATE inquiries SET name = ?, email = ?, topic = ?, message = ?, updated_at = ? WHERE id = ? AND deleted_at IS NULL'
-  ).bind(name, email, topic, message, updatedAt, id).run();
+    'UPDATE inquiries SET name = ?, email = ?, topic = ?, subject = ?, message = ?, updated_at = ? WHERE id = ? AND deleted_at IS NULL'
+  ).bind(name, email, topic, subject, message, updatedAt, id).run();
   if (!result.meta.changes) return json({ error: '수정할 문의 내역을 찾을 수 없습니다.' }, 404);
 
   return json({ success: true, updated_at: updatedAt });

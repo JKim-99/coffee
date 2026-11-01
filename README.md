@@ -8,6 +8,7 @@
 - D1 연결 확인용 Worker: <https://compose-coffee-api.whddnjsqkd123.workers.dev/health>
 - 메뉴 목록: <https://coffee-4bx.pages.dev/menu.html>
 - 문의하기: <https://coffee-4bx.pages.dev/contact.html>
+- 문의 확인하기: <https://coffee-4bx.pages.dev/inquiries.html>
 - 메뉴 상세: 메뉴 카드에서 해당 상세 화면으로 이동합니다.
 - 검색 크롤링 규칙: <https://coffee-4bx.pages.dev/robots.txt>
 - 사이트맵: <https://coffee-4bx.pages.dev/sitemap.xml>
@@ -79,7 +80,12 @@ npx wrangler d1 migrations apply compose-coffee-inquiries --remote
 | `index.html` | 홈페이지 메인 화면 |
 | `menu.html` | 메뉴 목록, 검색, 카테고리 필터 |
 | `menu-detail.html` | 선택한 메뉴의 사진과 영양 상세 |
-| `contact.html` | 고객 문의 및 상담 안내 |
+| `contact.html` | 문의 제목·내용 작성 및 문의 확인 페이지 링크 |
+| `inquiries.html` | 로그인 계정에 연결된 문의 제목 목록 |
+| `inquiry-detail.html` | 로그인한 작성자만 확인할 수 있는 문의 상세 |
+| `inquiries.js` | 본인 이메일에 연결된 문의 제목 목록 조회 |
+| `inquiry-detail.js` | 문의 상세 조회 및 접근권한 처리 |
+| `account.css` | 문의 목록과 상세 페이지 스타일 |
 | `account.html` | 로그인 세션으로 확인하는 회원 정보 페이지 |
 | `account.js` | 인증된 회원 정보 조회 및 로그아웃 |
 | `contact.css` | 문의하기 페이지의 폼 레이아웃과 반응형 스타일 |
@@ -92,6 +98,7 @@ npx wrangler d1 migrations apply compose-coffee-inquiries --remote
 | `migrations/0002_add_update_and_delete_timestamps.sql` | 문의 수정·삭제 시각 컬럼 추가 마이그레이션 |
 | `migrations/0003_create_users.sql` | 회원가입 데이터 저장용 유저 테이블 마이그레이션 |
 | `migrations/0004_add_user_session_fields.sql` | 사용자 세션 해시 및 만료 시각 컬럼 마이그레이션 |
+| `migrations/0005_add_inquiry_subject.sql` | 문의 제목 컬럼 추가 및 기존 문의 제목 채우기 |
 | `wrangler.toml` | Cloudflare Pages 설정 및 D1 바인딩 |
 | `wrangler.worker.toml` | 독립 Worker와 동일 D1 바인딩 설정 |
 | `styles.css` | 색상, 레이아웃, 반응형 및 애니메이션 스타일 |

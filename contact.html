@@ -22,6 +22,7 @@
       <a class="nav-link" href="index.html">홈</a>
       <a class="nav-link" href="menu.html">메뉴</a>
       <a class="nav-link is-current" href="contact.html" aria-current="page">문의하기</a>
+      <a class="nav-link" href="inquiries.html">문의 확인하기</a>
       <a class="nav-link" href="login.html">로그인</a>
       <a class="nav-cta" href="tel:18995685">창업 문의 <span>1899-5685</span></a>
     </nav>
@@ -61,12 +62,20 @@
           <option value="기타">기타</option>
         </select>
 
+        <label for="contact-subject">문의 제목 <span aria-hidden="true">*</span></label>
+        <input id="contact-subject" name="subject" type="text" required maxlength="120" placeholder="문의 제목을 입력해 주세요">
+
         <label for="contact-message">문의 내용 <span aria-hidden="true">*</span></label>
         <textarea id="contact-message" name="message" rows="7" required maxlength="3000" placeholder="문의하실 내용을 입력해 주세요."></textarea>
         <p class="form-note">문의 내용은 안전한 연결을 통해 서비스 데이터베이스에 저장됩니다.</p>
-        <button class="button button-dark" type="submit">문의 내역 저장 <span aria-hidden="true">↓</span></button>
+        <button class="button button-dark" type="submit">문의하기 <span aria-hidden="true">→</span></button>
         <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
       </form>
+    </section>
+
+    <section class="inquiry-shortcut section-wrap" aria-label="문의 확인">
+      <p>작성한 문의의 답변과 내용을 확인할 수 있습니다.</p>
+      <a class="button button-outline" href="inquiries.html">문의 확인하기 <span aria-hidden="true">↗</span></a>
     </section>
 
     <section class="inquiry-history section-wrap" id="inquiry-history" aria-labelledby="inquiry-history-title" hidden>
@@ -85,7 +94,7 @@
 
   <footer class="site-footer">
     <a class="brand brand-footer" href="index.html"><span class="brand-mark" aria-hidden="true">C</span><span class="brand-word">COMPOSE<span>COFFEE</span></span></a>
-    <div class="footer-links"><a href="contact.html" aria-current="page">문의하기</a><a href="login.html">로그인</a></div>
+    <div class="footer-links"><a href="contact.html" aria-current="page">문의하기</a><a href="inquiries.html">문의 확인하기</a><a href="login.html">로그인</a></div>
     <p>고객상담 <a href="tel:18995003">1899-5003</a> <span>·</span> 창업문의 <a href="tel:18995685">1899-5685</a></p>
     <small>문의 내역은 서비스 데이터베이스에 저장됩니다.</small>
   </footer>

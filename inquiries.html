@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="description" content="로그인한 회원의 문의 내역을 확인합니다.">
+  <meta name="theme-color" content="#f7c600">
+  <title>문의 확인하기 | 컴포즈커피</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="contact.css">
+  <link rel="stylesheet" href="account.css">
+  <script src="site-auth.js" defer></script>
+  <script src="inquiries.js" defer></script>
+</head>
+<body class="account-page">
+  <a class="skip-link" href="#main">본문 바로가기</a>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="컴포즈커피 홈"><span class="brand-mark" aria-hidden="true">C</span><span class="brand-word">COMPOSE<span>COFFEE</span></span></a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="메뉴 열기"><span></span><span></span><span></span></button>
+    <nav class="primary-nav" id="primary-nav" aria-label="주 메뉴">
+      <a class="nav-link" href="index.html">홈</a><a class="nav-link" href="menu.html">메뉴</a>
+      <a class="nav-link" href="contact.html">문의하기</a><a class="nav-link is-current" href="inquiries.html" aria-current="page">문의 확인하기</a>
+      <a class="nav-link" href="login.html">로그인</a>
+    </nav>
+  </header>
+  <main id="main" class="account-main">
+    <section class="page-banner contact-banner" aria-labelledby="inquiries-title">
+      <div class="page-banner-inner"><p class="eyebrow">MY INQUIRIES</p><h1 id="inquiries-title"><em>문의 확인하기</em></h1><p>로그인한 계정으로 작성한 문의 내역입니다.</p></div>
+      <span class="banner-symbol" aria-hidden="true">?</span>
+    </section>
+    <section class="inquiries-panel section-wrap" aria-label="내 문의 목록">
+      <p class="account-status" id="inquiries-status" role="status" aria-live="polite">문의 내역을 불러오고 있습니다.</p>
+      <p class="history-empty" id="inquiries-empty" hidden>작성된 문의가 없습니다.</p>
+      <div class="my-inquiry-list" id="my-inquiry-list"></div>
+      <a class="button button-dark" href="contact.html">새 문의 작성하기 <span aria-hidden="true">→</span></a>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <a class="brand brand-footer" href="index.html"><span class="brand-mark" aria-hidden="true">C</span><span class="brand-word">COMPOSE<span>COFFEE</span></span></a>
+    <div class="footer-links"><a href="contact.html">문의하기</a><a href="account.html">내 정보</a></div>
+    <small>문의 내역은 로그인한 계정의 이메일과 일치하는 항목만 표시됩니다.</small>
+  </footer>
+</body>
+</html>

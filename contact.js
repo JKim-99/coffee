@@ -28,7 +28,7 @@
     inquiryList.innerHTML = inquiries.map((item) => `
       <article class="inquiry-card">
         <div class="inquiry-card-heading"><span class="inquiry-topic">${escapeHtml(item.topic)}</span><time>작성 ${escapeHtml(new Date(item.created_at).toLocaleString('ko-KR'))}</time></div>
-        <h3>${escapeHtml(item.topic)} 문의</h3>
+        <h3>${escapeHtml(item.subject || `${item.topic} 문의`)}</h3>
         <p class="inquiry-card-meta">${escapeHtml(item.name)} · ${escapeHtml(item.email)}</p>
         <p class="inquiry-card-message">${escapeHtml(item.message).replace(/\r?\n/g, '<br>')}</p>
         <div class="inquiry-card-actions">
@@ -82,6 +82,7 @@
       name: String(fields.get('name')).trim(),
       email: String(fields.get('email')).trim(),
       topic: String(fields.get('topic')),
+      subject: String(fields.get('subject')).trim(),
       message: String(fields.get('message')).trim()
     };
 

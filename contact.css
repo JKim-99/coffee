@@ -39,5 +39,9 @@
 .inquiry-card-actions{border-top:1px solid var(--line);padding-top:14px}
 .inquiry-delete{padding:7px 11px;font-size:10px}
 .inquiry-history[hidden]{display:none}
+.inquiry-shortcut{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-top:0;padding-bottom:80px}
+.inquiry-shortcut p{font-size:12px;color:var(--muted);margin:0}
+.inquiry-shortcut .button-outline{border:1px solid var(--ink)}
 @media(max-width:680px){.contact-content{grid-template-columns:1fr;gap:38px;padding-top:58px;padding-bottom:76px}.contact-intro{position:static}.contact-intro h2{font-size:34px}.contact-phone{margin-top:23px}.contact-form .button{width:100%}}
 @media(max-width:680px){.inquiry-history{padding-bottom:76px}.history-heading{align-items:start}.history-clear{padding:9px;font-size:10px}.inquiry-card{padding:17px}.inquiry-card-heading{align-items:flex-start}.inquiry-card time{text-align:right}}
+@media(max-width:680px){.inquiry-shortcut{align-items:stretch;flex-direction:column;padding-bottom:60px}.inquiry-shortcut .button{width:100%}}

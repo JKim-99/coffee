@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="description" content="로그인한 회원의 문의 상세 내용을 확인합니다.">
+  <meta name="theme-color" content="#f7c600">
+  <title>문의 상세 | 컴포즈커피</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="contact.css">
+  <link rel="stylesheet" href="account.css">
+  <script src="site-auth.js" defer></script>
+  <script src="inquiry-detail.js" defer></script>
+</head>
+<body class="account-page">
+  <a class="skip-link" href="#main">본문 바로가기</a>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="컴포즈커피 홈"><span class="brand-mark" aria-hidden="true">C</span><span class="brand-word">COMPOSE<span>COFFEE</span></span></a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="메뉴 열기"><span></span><span></span><span></span></button>
+    <nav class="primary-nav" id="primary-nav" aria-label="주 메뉴">
+      <a class="nav-link" href="index.html">홈</a><a class="nav-link" href="menu.html">메뉴</a>
+      <a class="nav-link" href="contact.html">문의하기</a><a class="nav-link is-current" href="inquiries.html" aria-current="page">문의 확인하기</a>
+      <a class="nav-link" href="login.html">로그인</a>
+    </nav>
+  </header>
+  <main id="main" class="account-main">
+    <section class="page-banner contact-banner" aria-labelledby="inquiry-detail-title">
+      <div class="page-banner-inner"><p class="eyebrow">INQUIRY DETAIL</p><h1 id="inquiry-detail-title"><em>문의 상세</em></h1><p>작성한 문의 내용을 확인합니다.</p></div>
+      <span class="banner-symbol" aria-hidden="true">✳</span>
+    </section>
+    <section class="inquiries-panel section-wrap">
+      <p class="account-status" id="inquiry-detail-status" role="status" aria-live="polite">문의 내용을 불러오고 있습니다.</p>
+      <article class="inquiry-detail-card" id="inquiry-detail-card" hidden>
+        <div class="inquiry-card-heading"><span class="inquiry-topic" id="detail-topic"></span><time id="detail-created"></time></div>
+        <h2 id="detail-subject"></h2>
+        <p class="inquiry-card-message" id="detail-message"></p>
+        <p class="detail-updated" id="detail-updated"></p>
+      </article>
+      <a class="button button-outline" href="inquiries.html">문의 목록으로</a>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <a class="brand brand-footer" href="index.html"><span class="brand-mark" aria-hidden="true">C</span><span class="brand-word">COMPOSE<span>COFFEE</span></span></a>
+    <div class="footer-links"><a href="contact.html">문의하기</a><a href="inquiries.html">문의 확인하기</a></div>
+    <small>본 사이트는 컴포즈커피 공식 페이지가 아닙니다.</small>
+  </footer>
+</body>
+</html>
