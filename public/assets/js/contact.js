@@ -61,37 +61,77 @@
     }
   }
 
+  const nameInput = document.getElementById('contact-name');
+  const emailInput = document.getElementById('contact-email');
+  const loginActions = document.getElementById('contact-login-actions');
+  const loginLink = document.getElementById('contact-login-link');
+  const draftKey = 'composecoffee.contact-draft.v1';
+  const draftFields = ['topic', 'subject', 'message'];
+  const field = (name) => form.querySelector(`[name="${name}"]`);
+  try {
+    const draft = JSON.parse(window.sessionStorage.getItem(draftKey) || 'null');
+    if (draft) draftFields.forEach((name) => {
+      if (typeof draft[name] === 'string') field(name).value = draft[name].slice(0, name === 'message' ? 3000 : 120);
+    });
+  } catch { /* Drafts are optional; unavailable storage does not block writing. */ }
+  loginLink?.addEventListener('click', () => {
+    try {
+      const draft = Object.fromEntries(draftFields.map((name) => [name, field(name).value]));
+      window.sessionStorage.setItem(draftKey, JSON.stringify(draft));
+    } catch { /* Keep the explicit login link usable without browser storage. */ }
+  });
+  document.getElementById('contact-stay')?.addEventListener('click', () => {
+    if (loginActions) loginActions.hidden = true;
+    status.textContent = '현재 화면에 머무릅니다. 문의 등록은 로그인 후 이용해 주세요.';
+  });
+
+  function showLogin() {
+    if (loginActions) loginActions.hidden = false;
+    status.textContent = '문의 안내는 자유롭게 확인할 수 있습니다. 등록하려면 로그인해 주세요. 작성 중인 내용은 로그인 링크를 누르면 임시 보관합니다.';
+  }
+  function applyMember(user) {
+    if (nameInput) { nameInput.value = user.nickname; nameInput.readOnly = true; }
+    if (emailInput) { emailInput.value = user.email; emailInput.readOnly = true; }
+    if (loginActions) loginActions.hidden = true;
+  }
+  async function loadMember() {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 10000);
+    try {
+      const response = await fetch('/api/auth/me', { credentials: 'same-origin', signal: controller.signal });
+      if (response.status === 401) { showLogin(); return null; }
+      if (!response.ok) throw new Error('member unavailable');
+      const { user } = await response.json();
+      if (!user?.id || !user.email) throw new Error('invalid member');
+      applyMember(user);
+      try { window.sessionStorage.removeItem(draftKey); } catch {}
+      return user;
+    } catch {
+      status.textContent = '회원 정보를 확인하지 못했습니다. 연결을 확인하고 문의 등록을 다시 시도해 주세요.';
+      return undefined;
+    } finally { clearTimeout(timer); }
+  }
+  const memberReady = loadMember();
+
   tryAdminHistory();
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
-    if (!form.reportValidity()) return;
 
     const submitButton = form.querySelector('button[type="submit"]');
-    const fields = new FormData(form);
-    const inquiry = {
-      name: String(fields.get('name')).trim(),
-      email: String(fields.get('email')).trim(),
-      topic: String(fields.get('topic')),
-      subject: String(fields.get('subject')).trim(),
-      message: String(fields.get('message')).trim()
-    };
-
     submitButton.disabled = true;
     status.textContent = '로그인 상태를 확인하고 있습니다.';
     try {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 10000);
-      let session;
-      try {
-        session = await fetch('/api/auth/me', { credentials: 'same-origin', signal: controller.signal });
-      } finally { clearTimeout(timer); }
-      if (session.status === 401) {
-        status.textContent = '로그인 후 문의를 작성해 주세요.';
-        window.location.href = 'login.html?next=%2Fcontact.html';
-        return;
-      }
-      if (!session.ok || !(await session.json()).user) throw new Error('로그인 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+      await memberReady;
+      const user = await loadMember();
+      if (!user) return;
+      if (!form.reportValidity()) return;
+      const fields = new FormData(form);
+      const inquiry = {
+        topic: String(fields.get('topic')),
+        subject: String(fields.get('subject')).trim(),
+        message: String(fields.get('message')).trim()
+      };
       status.textContent = '문의 내역을 저장하고 있습니다.';
       const response = await fetch('/api/inquiries', {
         method: 'POST',
@@ -99,9 +139,12 @@
         body: JSON.stringify(inquiry)
       });
       const data = await response.json();
+      if (response.status === 401) { showLogin(); return; }
       if (!response.ok) throw new Error(data.error || '문의 내역을 저장하지 못했습니다.');
 
       form.reset();
+      applyMember(user);
+      try { window.sessionStorage.removeItem(draftKey); } catch {}
       status.textContent = '문의 내역을 데이터베이스에 저장했습니다.';
       try {
         const response = await fetch('/api/inquiries?limit=50', { headers: { accept: 'application/json' }, credentials: 'same-origin' });

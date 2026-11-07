@@ -10,7 +10,7 @@ const assetPath = (file) => file.endsWith('.html') ? ['public', file] : file.end
 function element() {
   return {
     dataset: {}, attributes: {}, classes: new Set(), listeners: {}, value: '', disabled: false,
-    classList: { add() {}, toggle() {} },
+    classList: { add() {}, toggle() {} }, focus() {},
     setAttribute(name, value) { this.attributes[name] = value; },
     removeAttribute(name) { delete this.attributes[name]; },
     getAttribute(name) { return this.attributes[name]; },
@@ -37,14 +37,21 @@ function element() {
   };
 }
 
-function page({ home = true, saved = [], status = 200, failSave = false, initialResponse, responsePlan = [], timers = { setTimeout, clearTimeout } } = {}) {
+function page({ home = true, saved = [], status = 200, failSave = false, initialResponse, items, scrollMetrics, responsePlan = [], timers = { setTimeout, clearTimeout } } = {}) {
   const grid = element();
-  const nodes = { [home ? 'featured-grid' : 'menu-grid']: grid, 'favorite-status': element(), 'favorite-retry': element() };
+  const nodes = { [home ? 'featured-grid' : 'menu-grid']: grid, 'favorite-status': element(), 'favorite-retry': element(), 'favorite-login-actions': element(), 'favorite-login-link': element(), 'favorite-stay': element() };
+  nodes['favorite-login-actions'].hidden = true;
   if (!home) for (const id of ['category-tabs', 'menu-search', 'result-count', 'empty-state']) nodes[id] = element();
+  if (!home && scrollMetrics) {
+    const tabs = nodes['category-tabs']; Object.assign(tabs, scrollMetrics);
+    for (const id of ['category-prev','category-next','category-scroll-hint']) nodes[id] = element();
+    tabs.scrollBy = ({left}) => { tabs.scrollLeft = Math.max(0,Math.min(tabs.scrollWidth-tabs.clientWidth,tabs.scrollLeft+left)); tabs.listeners.scroll(); };
+  }
   const calls = [], alerts = [];
   const window = {
-    COMPOSE_MENU: [{ id: '123', name: '라떼', category: '커피', image: 'latte.jpg' }],
+    COMPOSE_MENU: items || [{ id: '123', name: '라떼', category: '커피', image: 'latte.jpg' }],
     location: { pathname: home ? '/' : '/menu.html', search: '', href: '' },
+    addEventListener() {},
     alert: (message) => alerts.push(message)
   };
   const document = {
@@ -138,7 +145,10 @@ test('click during initial fetch waits and duplicate clicks produce one save', a
 test('logged-out heart preserves selected menu in login destination', async () => {
   const p = page({ status: 401 });
   await p.click();
-  assert.equal(new URLSearchParams(p.window.location.href.split('?')[1]).get('next'), '/menu-detail.html?id=123&saveFavorite=1');
+  assert.equal(p.window.location.href, '');
+  assert.equal(p.alerts.length, 0);
+  assert.equal(p.nodes['favorite-login-actions'].hidden, false);
+  assert.equal(new URLSearchParams(p.nodes['favorite-login-link'].href.split('?')[1]).get('next'), '/menu-detail.html?id=123&saveFavorite=1');
   assert.equal(p.calls.length, 1);
   expectSelected(p.grid.buttons[0], false);
 });
@@ -195,4 +205,46 @@ test('pending load immediately disables clicked heart and timeout permits retry'
   assert.equal(p.grid.buttons[0].disabled, false);
   assert.equal(p.nodes['favorite-retry'].hidden, false);
   assert.equal(p.window.location.href, '');
+});
+
+test('signed-out user can dismiss heart login choice and keep browsing', async () => {
+  const p = page({ status: 401 });
+  await p.click();
+  p.nodes['favorite-stay'].listeners.click();
+  assert.equal(p.window.location.href, '');
+  assert.equal(p.nodes['favorite-login-actions'].hidden, true);
+});
+test('favorites tab distinguishes signed-out, loading, failure and signed-in empty states', async () => {
+  const p = page({ home: false, status: 401 });
+  const select = () => {
+    const tab = element(); tab.dataset.category = '내 선호 메뉴';
+    p.nodes['category-tabs'].listeners.click({ target: tab });
+  };
+  select();
+  assert.match(p.nodes['empty-state'].innerHTML, /불러오는 중/);
+  await settle();
+  assert.match(p.nodes['empty-state'].innerHTML, /로그인하러 가기/);
+  p.window.setFavoriteState('error');
+  assert.match(p.nodes['empty-state'].innerHTML, /재시도/);
+  p.window.setFavoriteState('ready');
+  assert.match(p.nodes['empty-state'].textContent, /아직 등록한 선호 메뉴가 없습니다/);
+});
+
+test('prefix search matches original temperature-specific names and unprefixed aliases', async () => {
+  const p = page({home:false, items:[{id:'1',name:'I-카페라떼',category:'커피'},{id:'2',name:'H-카페라떼',category:'커피'}]});
+  await settle();
+  for (const [query,count] of [['카페라떼',2],['I-카페라떼',1],['h-카페라떼',1]]) {
+    p.nodes['menu-search'].value=query; p.nodes['menu-search'].listeners.input();
+    assert.equal(p.grid.buttons.length,count);
+  }
+});
+test('category controls expose forward and backward scrolling only while more tabs exist', () => {
+  const p=page({home:false,scrollMetrics:{scrollWidth:900,clientWidth:300,scrollLeft:0}});
+  assert.equal(p.nodes['category-prev'].hidden,true);
+  assert.equal(p.nodes['category-next'].hidden,false);
+  for(let i=0;i<3;i++) p.nodes['category-next'].listeners.click();
+  assert.equal(p.nodes['category-next'].hidden,true);
+  assert.equal(p.nodes['category-prev'].hidden,false);
+  for(let i=0;i<3;i++) p.nodes['category-prev'].listeners.click();
+  assert.equal(p.nodes['category-prev'].hidden,true);
 });

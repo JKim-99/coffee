@@ -17,24 +17,25 @@ function element() {
     querySelectorAll() { return []; }
   };
 }
-function auth({ withLogin = false, failLogout = false } = {}) {
-  const logout = element(), account = element(), login = element();
+function auth({ withLogin = false, failLogout = false, signedOut = false, header = false } = {}) {
+  const logout = element(), account = element(), login = element(), signup = element(), status = element();
   const nav = { classList: { add() {} }, querySelector(selector) {
     if (selector === 'a[href="login.html"]') return withLogin ? login : null;
-    if (selector === '#nav-logout-link') return logout;
+    if (selector === '#nav-logout-link') return header ? null : logout;
+    if (selector === 'a[href="signup.html"]') return signup;
     if (selector === '#nav-account-link' || selector === 'a[href="account.html"]') return account;
     return null;
   } };
   const calls = [], redirects = [], alerts = [];
   vm.runInNewContext(source('site-auth.js'), {
-    document: { querySelector: () => nav, querySelectorAll: () => [] },
+    document: { querySelector: () => nav, querySelectorAll: () => [], getElementById: (id) => id === 'account-header-logout' ? (header ? logout : null) : id === 'account-status' ? status : null },
     window: { location: { replace: (url) => redirects.push(url) }, alert: (message) => alerts.push(message) },
     fetch: async (url, options = {}) => {
       calls.push({ url, ...options });
-      return { ok: !(failLogout && options.method === 'DELETE'), json: async () => ({ user: { nickname: '테스트' } }) };
+      return { ok: !signedOut && !(failLogout && options.method === 'DELETE'), json: async () => ({ user: { nickname: '테스트' } }) };
     }
   });
-  return { logout, account, login, calls, redirects, alerts };
+  return { logout, account, login, signup, status, calls, redirects, alerts };
 }
 test('existing account header logs out without a login link or duplicate account link', async () => {
   const p = auth();
@@ -54,10 +55,12 @@ test('other pages still bind logout and hide login link', async () => {
 });
 test('logout failure restores header control without redirecting', async () => {
   const p = auth({ failLogout: true });
+  await settle();
   await p.logout.listeners.click({ preventDefault() {} });
   assert.equal(p.logout.textContent, '로그아웃');
   assert.equal(p.logout.attrs['aria-disabled'], undefined);
-  assert.equal(p.alerts.length, 1);
+  assert.equal(p.alerts.length, 0);
+  assert.match(p.status.textContent, /로그아웃하지 못했습니다/);
   assert.equal(p.redirects.length, 0);
 });
 test('account page has only the header logout and account script has no removed button dependency', () => {
@@ -106,4 +109,31 @@ test('admin handles empty and missing topics and escapes category text', async (
   assert.match(html, /기타 <span>1건/);
   assert.match(html, /&lt;img src=x&gt;/);
   assert.doesNotMatch(html, /<img/);
+});
+
+test('signed-out account navigation hides member controls and keeps login/signup visible', async () => {
+  const p = auth({ withLogin: true, signedOut: true, header: true });
+  await settle();
+  assert.equal(p.logout.hidden, true);
+  assert.equal(p.account.hidden, true);
+  assert.notEqual(p.login.hidden, true);
+  assert.notEqual(p.signup.hidden, true);
+});
+test('authenticated account header provides one-step logout outside the mobile menu', async () => {
+  const p = auth({ withLogin: true, header: true });
+  await settle();
+  assert.equal(p.logout.hidden, false);
+  assert.equal(p.signup.hidden, true);
+  await p.logout.listeners.click({ preventDefault() {} });
+  assert.deepEqual(p.redirects, ['login.html']);
+});
+
+test('admin inquiry list escapes markup and detail preserves raw content as plain text', async () => {
+  const item={...inquiry('x','일반 문의'),subject:'<img src=x onerror=alert(1)>',name:'<svg onload=alert(1)>',message:'<script>alert(1)</script>',email:'test@example.invalid'};
+  const get=admin([item]);await settle();
+  assert.doesNotMatch(get('admin-inquiry-list').innerHTML,/<img/);
+  assert.match(get('admin-inquiry-list').innerHTML,/&lt;img/);
+  get('admin-inquiry-list').listeners.click({target:{closest:()=>({dataset:{inquiryId:'x'}})}});
+  assert.equal(get('selected-subject').textContent,item.subject);
+  assert.equal(get('selected-message').textContent,item.message);
 });

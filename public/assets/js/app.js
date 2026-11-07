@@ -14,6 +14,7 @@
   const displayName = (value) => decodeHtmlEntities(value)
     .replace(/^\s*[IH]-\s*/i, '')
     .trim();
+  let favoriteState = window.COMPOSE_FAVORITE_STATE || 'loading';
   let favoriteMenuIds = new Set((window.COMPOSE_FAVORITE_IDS || []).map(String));
 
 
@@ -86,22 +87,39 @@
     const search = document.getElementById('menu-search');
     const count = document.getElementById('result-count');
     const empty = document.getElementById('empty-state');
-    let selectedCategory = '전체';
+    let selectedCategory = new URLSearchParams(window.location.search).get('favorites') === '1' ? '내 선호 메뉴' : '전체';
     favoriteMenuIds = new Set((window.COMPOSE_FAVORITE_IDS || []).map(String));
 
     tabs.innerHTML = ['전체', '내 선호 메뉴', ...categories].map((category, index) =>
-      `<button class="category-tab" type="button" data-category="${escapeHtml(category)}" aria-pressed="${index === 0}">${escapeHtml(category)}</button>`
+      `<button class="category-tab" type="button" data-category="${escapeHtml(category)}" aria-pressed="${category === selectedCategory}">${escapeHtml(category)}</button>`
     ).join('');
 
     renderMenu = () => {
       const query = search.value.trim().toLocaleLowerCase('ko');
       const filtered = menu.filter((item) =>
+        (selectedCategory !== '내 선호 메뉴' || favoriteState === 'ready') &&
         (selectedCategory === '전체' || (selectedCategory === '내 선호 메뉴'
           ? favoriteMenuIds.has(String(item.id))
-          : item.category === selectedCategory)) && displayName(item.name).toLocaleLowerCase('ko').includes(query)
+          : item.category === selectedCategory)) && (displayName(item.name).toLocaleLowerCase('ko').includes(query) || decodeHtmlEntities(item.name).trim().toLocaleLowerCase('ko').includes(query))
       );
       menuGrid.innerHTML = filtered.map(cardMarkup).join('');
       count.textContent = `${filtered.length}개 메뉴`;
+      const needsMemberState = selectedCategory === '내 선호 메뉴' && favoriteState !== 'ready';
+      if (needsMemberState) {
+        const messages = {
+          loading: '선호 메뉴를 불러오는 중입니다.',
+          'signed-out': '로그인 후 나만의 선호 메뉴를 등록하고 확인해 보세요.',
+          error: '선호 메뉴를 불러오지 못했습니다. 위의 다시 불러오기 버튼으로 재시도해 주세요.'
+        };
+        count.textContent = messages[favoriteState] || messages.loading;
+        empty.innerHTML = favoriteState === 'signed-out'
+          ? '<p>로그인 후 나만의 선호 메뉴를 등록하고 확인해 보세요.</p><a class="button button-dark" href="login.html?next=%2Fmenu.html%3Ffavorites%3D1">로그인하러 가기</a>'
+          : `<p>${messages[favoriteState] || messages.loading}</p>`;
+      } else {
+        empty.textContent = selectedCategory === '내 선호 메뉴' && !query
+          ? '아직 등록한 선호 메뉴가 없습니다. 메뉴의 하트를 눌러 등록해 보세요.'
+          : '검색 결과가 없습니다. 다른 메뉴 이름으로 검색해 주세요.';
+      }
       empty.hidden = filtered.length > 0;
       menuGrid.hidden = filtered.length === 0;
     };
@@ -115,9 +133,30 @@
       tabs.querySelectorAll('.category-tab').forEach((tab) => tab.setAttribute('aria-pressed', String(tab === button)));
       renderMenu();
     });
+    const previous = document.getElementById('category-prev');
+    const next = document.getElementById('category-next');
+    const hint = document.getElementById('category-scroll-hint');
+    function updateScrollControls() {
+      const max = tabs.scrollWidth - tabs.clientWidth;
+      const overflow = max > 1;
+      if (previous) previous.hidden = !overflow || tabs.scrollLeft <= 1;
+      if (next) next.hidden = !overflow || tabs.scrollLeft >= max - 1;
+      if (hint) hint.hidden = !overflow;
+    }
+    previous?.addEventListener('click', () => tabs.scrollBy({ left: -tabs.clientWidth * .75, behavior: window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ? 'auto' : 'smooth' }));
+    next?.addEventListener('click', () => tabs.scrollBy({ left: tabs.clientWidth * .75, behavior: window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ? 'auto' : 'smooth' }));
+    tabs.addEventListener('scroll', updateScrollControls, { passive: true });
+    window.addEventListener('resize', updateScrollControls);
+    if ('ResizeObserver' in window) new ResizeObserver(updateScrollControls).observe(tabs);
+    updateScrollControls();
     search.addEventListener('input', renderMenu);
     renderMenu();
   }
+
+  window.setFavoriteState = (state) => {
+    favoriteState = state;
+    renderMenu();
+  };
 
   window.setFavoriteMenuIds = (ids) => {
     favoriteMenuIds = new Set(ids.map(String));

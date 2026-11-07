@@ -36,7 +36,7 @@ function navigation(status = 401, withNav = true) {
     fetch: async (url) => {
       calls.push(url);
       if (status instanceof Error) throw status;
-      return { status, ok: status === 200, json: async () => ({ user: { nickname: 'QA' } }) };
+      return { status, ok: status === 200, json: async () => ({ user: { id: 'qa-user', nickname: 'QA', email: 'qa@example.invalid' } }) };
     }
   });
   for (const file of ['app.js', 'contact.js', 'site-auth.js']) vm.runInContext(source(file), context);
@@ -53,14 +53,10 @@ test('app, contact and auth scripts together bind exactly one native menu click 
   assert.equal(p.nav.classes.has('is-open'), false);
 });
 for (const status of [401, 200, 500, new Error('offline')]) {
-  test(`all header, body and footer inquiry links follow same policy: ${status}`, async () => {
+  test(`public inquiry links are not intercepted by authentication checks: ${status}`, () => {
     const p = navigation(status);
-    for (const link of p.links) {
-      p.window.location.href = '';
-      await link.handlers.click[0]({ preventDefault() {} });
-      assert.equal(p.window.location.href, status === 401 ? 'login.html?next=%2Fcontact.html' : status === 200 ? '/contact.html' : '');
-      assert.equal(link.attrs['aria-busy'], undefined);
-    }
+    p.links.forEach((link) => assert.equal(link.handlers.click, undefined));
+    assert.equal(p.alerts.length, 0);
   });
 }
 test('captured image errors provide named fallback for hero and dynamically created cards', () => {
@@ -117,10 +113,9 @@ test('selected detail page includes explicit heart confirmation and known caffei
   assert.match(detail.innerHTML, /가격·알레르기 정보는 이 시안에서 제공하지 않습니다/);
 });
 
-test('inquiry links on login and signup pages work without primary navigation', async () => {
+test('public inquiry links on login and signup screens are not intercepted', () => {
   const p = navigation(401, false);
-  await p.links[0].handlers.click[0]({ preventDefault() {} });
-  assert.equal(p.window.location.href, 'login.html?next=%2Fcontact.html');
+  assert.equal(p.links[0].handlers.click, undefined);
 });
 for (const authStatus of [401, 500, 200]) {
   test(`direct contact submission checks session before writing: ${authStatus}`, async () => {
@@ -137,13 +132,14 @@ for (const authStatus of [401, 500, 200]) {
       fetch: async (url, options = {}) => {
         calls.push({ url, ...options });
         const status = url === '/api/auth/me' ? authStatus : options.method === 'POST' ? 201 : 401;
-        return { status, ok: status < 400, json: async () => ({ user: { nickname: 'QA' } }) };
+        return { status, ok: status < 400, json: async () => ({ user: { id: 'qa-user', nickname: 'QA', email: 'qa@example.invalid' } }) };
       }
     });
     await form.handlers.submit[0]({ preventDefault() {} });
     assert.equal(calls.filter((call) => call.method === 'POST').length, authStatus === 200 ? 1 : 0);
     assert.equal(submit.disabled, false);
-    assert.equal(location.href, authStatus === 401 ? 'login.html?next=%2Fcontact.html' : '');
-    if (authStatus === 500) assert.match(get('form-status').textContent, /로그인 상태를 확인하지 못했습니다/);
+    assert.equal(location.href, '');
+    if (authStatus === 401) assert.equal(get('contact-login-actions').hidden, false);
+    if (authStatus === 500) assert.match(get('form-status').textContent, /회원 정보를 확인하지 못했습니다/);
   });
 }

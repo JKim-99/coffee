@@ -19,18 +19,22 @@
   <header class="site-header">
     <a class="brand" href="index.html" aria-label="컴포즈커피 홈"><span class="brand-mark" aria-hidden="true">C</span><span class="brand-word">COMPOSE<span>COFFEE</span></span></a>
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="메뉴 열기"><span></span><span></span><span></span></button>
-    <nav class="primary-nav" id="primary-nav" aria-label="주 메뉴"><a class="nav-link" href="index.html">홈</a><a class="nav-link is-current" href="menu.html" aria-current="page">메뉴</a><a class="nav-link" href="contact.html">문의하기</a><a class="nav-link" href="login.html">로그인</a><a class="nav-cta" href="tel:18995685">창업 문의 <span>1899-5685</span></a></nav>
+    <nav class="primary-nav" id="primary-nav" aria-label="주 메뉴"><a class="nav-link" href="index.html">홈</a><a class="nav-link is-current" href="menu.html" aria-current="page">메뉴</a><a class="nav-link" href="contact.html">문의하기</a><a class="nav-link" href="login.html">로그인</a><a class="nav-link" href="signup.html">회원가입</a><a class="nav-cta" href="tel:18995685">창업 문의 <span>1899-5685</span></a></nav>
   </header>
   <main id="main">
     <section class="page-banner"><div class="page-banner-inner"><p class="eyebrow">A MENU FOR EVERY MOMENT</p><h1>컴포즈 <em>메뉴</em></h1><p>오늘 마음이 가는 메뉴를 골라보세요.</p></div><span class="banner-symbol" aria-hidden="true">✳</span></section>
     <section class="menu-browser section-wrap" aria-labelledby="menu-list-title">
       <div class="menu-toolbar"><div><p class="eyebrow">EXPLORE OUR MENU</p><h2 id="menu-list-title">메뉴 둘러보기</h2></div><label class="search-box"><span class="sr-only">메뉴 검색</span><input id="menu-search" type="search" placeholder="메뉴 이름 검색" autocomplete="off"><span aria-hidden="true">⌕</span></label></div>
-      <div class="category-tabs" id="category-tabs" role="group" aria-label="메뉴 카테고리"></div>
+      <div class="category-scroll"><div class="category-tabs" id="category-tabs" role="group" aria-label="메뉴 카테고리"></div><div class="category-scroll-controls"><span id="category-scroll-hint" hidden>좌우로 이동해 더 많은 카테고리를 확인하세요.</span><button id="category-prev" type="button" aria-label="이전 카테고리 보기" hidden>←</button><button id="category-next" type="button" aria-label="다음 카테고리 보기" hidden>→</button></div></div>
       <p class="result-count" id="result-count" aria-live="polite"></p>
       <p class="favorite-status" id="favorite-status" role="status" aria-live="polite"></p>
       <button class="favorite-retry button button-outline" id="favorite-retry" type="button" hidden>선호 메뉴 다시 불러오기</button>
+      <div class="inline-auth-actions" id="favorite-login-actions" hidden>
+        <a class="button button-dark" id="favorite-login-link" href="login.html">로그인하러 가기</a>
+        <button class="button button-outline" id="favorite-stay" type="button">계속 둘러보기</button>
+      </div>
       <div class="menu-grid" id="menu-grid" aria-live="polite"></div>
-      <p class="empty-state" id="empty-state" hidden>검색 결과가 없습니다. 다른 메뉴 이름으로 검색해 주세요.</p>
+      <div class="empty-state" id="empty-state" hidden>검색 결과가 없습니다. 다른 메뉴 이름으로 검색해 주세요.</div>
     </section>
   </main>
   <footer class="site-footer"><a class="brand brand-footer" href="index.html"><span class="brand-mark" aria-hidden="true">C</span><span class="brand-word">COMPOSE<span>COFFEE</span></span></a><div class="footer-links"><a href="contact.html">문의하기</a><a href="login.html">로그인</a></div><p>고객상담 <a href="tel:18995003">1899-5003</a> <span>·</span> 창업문의 <a href="tel:18995685">1899-5685</a></p><small>메뉴 사진 및 영양 정보 출처: <a href="assets/data/menu.md">프로젝트 메뉴 자료</a> · <a href="https://composecoffee.com/index.php?mid=compose&amp;act=dispCafemenuGalleryList" target="_blank" rel="noopener">컴포즈커피 공식 페이지</a></small></footer>

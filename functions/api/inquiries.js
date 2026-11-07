@@ -1,3 +1,6 @@
+import { currentMember } from '../../lib/server/member.js';
+import { missingInquiryOwnerColumn } from '../../lib/server/inquiry-schema.js';
+
 const allowedTopics = new Set(['일반 문의', '메뉴 문의', '매장 이용 문의', '제휴 문의', '기타']);
 
 function json(data, status = 200) {
@@ -38,6 +41,8 @@ export async function onRequestGet({ env, request }) {
 
 export async function onRequestPost({ env, request }) {
   if (!env.DB) return json({ error: '문의 데이터베이스가 설정되지 않았습니다.' }, 503);
+  const user = await currentMember(request, env);
+  if (!user) return json({ error: '문의 등록은 로그인 후 이용해 주세요.' }, 401);
 
   let body;
   try {
@@ -46,8 +51,8 @@ export async function onRequestPost({ env, request }) {
     return json({ error: '요청 본문은 올바른 JSON이어야 합니다.' }, 400);
   }
 
-  const name = typeof body.name === 'string' ? body.name.trim() : '';
-  const email = typeof body.email === 'string' ? body.email.trim() : '';
+  const name = user.nickname;
+  const email = user.email;
   const topic = typeof body.topic === 'string' ? body.topic.trim() : '';
   const subject = typeof body.subject === 'string' ? body.subject.trim() : '';
   const message = typeof body.message === 'string' ? body.message.trim() : '';
@@ -60,11 +65,21 @@ export async function onRequestPost({ env, request }) {
 
   const id = crypto.randomUUID();
   const createdAt = new Date().toISOString();
-  await env.DB.prepare(
-    'INSERT INTO inquiries (id, name, email, topic, subject, message, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
-  ).bind(id, name, email, topic, subject, message, createdAt, createdAt).run();
+  let ownerLinked = true;
+  try {
+    await env.DB.prepare(
+      'INSERT INTO inquiries (id, name, email, topic, subject, message, created_at, updated_at, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    ).bind(id, name, email, topic, subject, message, createdAt, createdAt, user.id).run();
+  } catch (error) {
+    if (!missingInquiryOwnerColumn(error)) throw error;
+    ownerLinked = false;
+    console.warn('Inquiry ownership migration 0008 is pending; using authenticated email compatibility mode.');
+    await env.DB.prepare(
+      'INSERT INTO inquiries (id, name, email, topic, subject, message, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+    ).bind(id, name, email, topic, subject, message, createdAt, createdAt).run();
+  }
 
-  return json({ inquiry: { id, name, email, topic, subject, message, created_at: createdAt, updated_at: createdAt, deleted_at: null } }, 201);
+  return json({ inquiry: { id, name, email, topic, subject, message, created_at: createdAt, updated_at: createdAt, deleted_at: null, user_id: ownerLinked ? user.id : null } }, 201);
 }
 
 export async function onRequestPut({ env, request }) {

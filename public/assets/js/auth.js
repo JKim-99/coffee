@@ -55,11 +55,35 @@
   }
 
   if (signupForm && status) {
+    const passwordInput = signupForm.querySelector('[name="password"]');
+    const confirmInput = signupForm.querySelector('[name="passwordConfirm"]');
+    const nicknameInput = signupForm.querySelector('[name="nickname"]');
+    [passwordInput, confirmInput, nicknameInput].forEach((input) => input?.addEventListener('input', () => {
+      input.removeAttribute('aria-invalid');
+    }));
     signupForm.addEventListener('submit', async (event) => {
       event.preventDefault();
       if (!signupForm.reportValidity()) return;
-      const submit = signupForm.querySelector('[type="submit"]');
       const fields = new FormData(signupForm);
+      const password = String(fields.get('password'));
+      const nickname = String(fields.get('nickname')).trim();
+      let invalid;
+      if (!/\S/u.test(password)) {
+        status.textContent = '비밀번호는 공백만으로 구성할 수 없습니다.';
+        invalid = passwordInput;
+      } else if (password !== String(fields.get('passwordConfirm'))) {
+        status.textContent = '비밀번호가 일치하지 않습니다.';
+        invalid = confirmInput;
+      } else if (!/^[\p{L}\p{M}\p{N} ._'\-]+$/u.test(nickname)) {
+        status.textContent = '닉네임에는 글자·숫자·공백과 . _ \' - 기호만 사용할 수 있습니다.';
+        invalid = nicknameInput;
+      }
+      if (invalid) {
+        invalid.setAttribute('aria-invalid', 'true');
+        invalid.focus();
+        return;
+      }
+      const submit = signupForm.querySelector('[type="submit"]');
       submit.disabled = true;
       status.textContent = '회원 정보를 저장하고 있습니다.';
       try {

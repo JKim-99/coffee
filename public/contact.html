@@ -22,7 +22,7 @@
       <a class="nav-link" href="index.html">홈</a>
       <a class="nav-link" href="menu.html">메뉴</a>
       <a class="nav-link is-current" href="contact.html" aria-current="page">문의하기</a>
-      <a class="nav-link" href="login.html">로그인</a>
+      <a class="nav-link" href="login.html">로그인</a><a class="nav-link" href="signup.html">회원가입</a>
       <a class="nav-cta" href="tel:18995685">창업 문의 <span>1899-5685</span></a>
     </nav>
   </header>
@@ -49,10 +49,10 @@
 
       <form class="contact-form" id="contact-form" method="post">
         <label for="contact-name">이름 <span aria-hidden="true">*</span></label>
-        <input id="contact-name" name="name" type="text" autocomplete="name" required maxlength="60" placeholder="이름을 입력해 주세요">
+        <input id="contact-name" name="name" type="text" autocomplete="name" required maxlength="60" readonly placeholder="로그인 후 자동 입력됩니다">
 
         <label for="contact-email">이메일 <span aria-hidden="true">*</span></label>
-        <input id="contact-email" name="email" type="email" autocomplete="email" required maxlength="254" placeholder="답변받을 이메일 주소를 입력해 주세요">
+        <input id="contact-email" name="email" type="email" autocomplete="email" required maxlength="254" readonly placeholder="로그인 후 자동 입력됩니다">
 
         <label for="contact-topic">문의 유형</label>
         <select id="contact-topic" name="topic">
@@ -71,6 +71,7 @@
         <p class="form-note">문의 내용은 안전한 연결을 통해 서비스 데이터베이스에 저장됩니다.</p>
         <button class="button button-dark" type="submit" disabled>문의하기 <span aria-hidden="true">→</span></button>
         <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+        <div class="inline-auth-actions" id="contact-login-actions" hidden><a class="button button-dark" id="contact-login-link" href="login.html?next=%2Fcontact.html">로그인하러 가기</a><button class="button button-outline" id="contact-stay" type="button">현재 화면에 머무르기</button></div>
       </form>
     </section>
 

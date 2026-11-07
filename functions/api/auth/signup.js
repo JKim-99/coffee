@@ -1,3 +1,4 @@
+import { validNickname, validPassword } from '../../../lib/server/validation.js';
 import { scrypt } from 'node:crypto';
 
 function json(data, status = 200, headers = {}) {
@@ -34,9 +35,9 @@ export async function onRequestPost({ request, env }) {
   const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : '';
   const password = typeof body.password === 'string' ? body.password : '';
   const gender = typeof body.gender === 'string' ? body.gender : '';
-  if (nickname.length < 2 || nickname.length > 30) return json({ error: '닉네임은 2~30자로 입력해 주세요.' }, 400);
+  if (!validNickname(nickname)) return json({ error: '닉네임은 2~30자의 글자·숫자·공백·마침표·밑줄·작은따옴표·하이픈으로 입력해 주세요.' }, 400);
   if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return json({ error: '올바른 이메일 주소를 입력해 주세요.' }, 400);
-  if (password.length < 8 || password.length > 128) return json({ error: '비밀번호는 8~128자로 입력해 주세요.' }, 400);
+  if (!validPassword(password)) return json({ error: '비밀번호는 8~128자이며 공백만으로 구성할 수 없습니다.' }, 400);
   if (!['female', 'male', 'undisclosed'].includes(gender)) return json({ error: '성별 항목을 선택해 주세요.' }, 400);
 
   const id = crypto.randomUUID();
