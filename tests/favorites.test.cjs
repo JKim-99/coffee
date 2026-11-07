@@ -105,6 +105,25 @@ test('recommended menu loads saved IDs, removes and adds via API without reshuff
   await settle();
   expectSelected(reloaded.grid.buttons[0], true);
 });
+test('homepage recommended cards toggle the pink favorite heart and persist across reload', async () => {
+  const p = page({ home: true, saved: [] });
+  await settle();
+  const heart = p.grid.buttons[0];
+  expectSelected(heart, false);
+
+  await p.click(heart);
+  expectSelected(heart, true);
+  assert.equal(p.calls.at(-1).method, 'POST');
+  assert.deepEqual(JSON.parse(p.calls.at(-1).body), { menuId: '123' });
+
+  const reloadedHome = page({ home: true, saved: [...p.window.COMPOSE_FAVORITE_IDS] });
+  await settle();
+  expectSelected(reloadedHome.grid.buttons[0], true);
+
+  await reloadedHome.click(reloadedHome.grid.buttons[0]);
+  expectSelected(reloadedHome.grid.buttons[0], false);
+  assert.equal(reloadedHome.calls.at(-1).method, 'DELETE');
+});
 test('click during initial fetch waits and duplicate clicks produce one save', async () => {
   let release;
   const p = page({ initialResponse: new Promise((resolve) => { release = resolve; }) });
